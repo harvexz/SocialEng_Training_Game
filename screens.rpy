@@ -218,7 +218,7 @@ style choice_button_text is button_text
 
 style choice_vbox:
     xalign 0.5
-    ypos 405
+    ypos 805
     yanchor 0.5
 
     spacing gui.choice_spacing
@@ -250,12 +250,13 @@ screen quick_menu():
 
             textbutton _("Back") action Rollback()
             textbutton _("History") action ShowMenu('history')
-            textbutton _("Skip") action Skip() alternate Skip(fast=True, confirm=True)
+            #textbutton _("Skip") action Skip() alternate Skip(fast=True, confirm=True)
             textbutton _("Auto") action Preference("auto-forward", "toggle")
-            textbutton _("Save") action ShowMenu('save')
-            textbutton _("Q.Save") action QuickSave()
-            textbutton _("Q.Load") action QuickLoad()
-            textbutton _("Prefs") action ShowMenu('preferences')
+            textbutton _("Help") action ShowMenu('help')
+            #textbutton _("Save") action ShowMenu('save')
+            #textbutton _("Q.Save") action QuickSave()
+            #textbutton _("Q.Load") action QuickLoad()
+            #textbutton _("Prefs") action ShowMenu('preferences')
 
 
 ## This code ensures that the quick_menu screen is displayed in-game, whenever
@@ -367,17 +368,17 @@ screen main_menu():
             spacing 20
 
             if persistent.game_progress and "current_level" in persistent.game_progress:
-                # $ persistent.game_progress["current_level"] = "first_level" For testing use - change for specific level
-                textbutton "Continue" action Start(persistent.game_progress["current_level"])
+                #$ persistent.game_progress["current_level"] = "first_level" For testing use - change for specific level
+                if persistent.game_progress["tutorial_seen"]:
+                    textbutton "Continue" action Start(persistent.game_progress["current_level"]) text_style "main_menu_text"
+                else:
+                    textbutton "Play Now" action Start(persistent.game_progress["current_level"]) text_style "main_menu_text"             
             else:
-                textbutton "Continue" action NullAction()
-            textbutton "Play Previous Levels" action Show("level_select")
-            textbutton "View Stats" action Show("stats_screen")
-            
-            if persistent.game_progress["tutorial_seen"]:
-                textbutton "Replay Tutorial" action Start("tutorial")
-
-            textbutton "Quit" action Quit(confirm=True)
+                textbutton "Continue" action NullAction() text_style "main_menu_text"
+            textbutton "Play Previous Levels" action Show("level_select") text_style "main_menu_text"
+            textbutton "View Stats" action Show("stats_screen") text_style "main_menu_text"
+            textbutton "Replay Tutorial" action Start("tutorial") text_style "main_menu_text"
+            textbutton "Quit" action Quit(confirm=True) text_style "main_menu_text"
 
 
 style main_menu_frame is empty
@@ -401,6 +402,10 @@ style main_menu_vbox:
 
 style main_menu_text:
     properties gui.text_properties("main_menu", accent=True)
+    font "gui/fonts/LEMONMILK-Medium.otf"
+    size 32
+    color "#000000"
+    hover_color "#535353"
 
 style main_menu_title:
     properties gui.text_properties("title")
@@ -1623,7 +1628,7 @@ style slider_slider:
 
 screen top_bar():
     frame:
-        xalign 0.99
+        xalign 0.01
         yalign 0.02
         background "#00000088"
         padding (10, 5)

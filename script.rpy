@@ -43,9 +43,10 @@ label tutorial:
 
     menu:
         "I'm ready":
-            $ persistent.game_progress["tutorial_seen"] = True
-            $ persistent.game_progress["current_level"] = "first_level"  # Set next level
-            $ save_progress()
+            if not persistent.game_progress["tutorial_seen"]:
+                $ persistent.game_progress["tutorial_seen"] = True
+                $ save_progress()
+                $ persistent.game_progress["current_level"] = "first_level"  # Set next level
             return
         
         "Wait im confused... say that again":
@@ -58,15 +59,36 @@ label tutorial:
 
 
 label level_complete:
+    # Updating data for analysis and game save
+    ## Updates for level completed
+
     "Level Complete!"
     if persistent.game_progress["current_level"] not in persistent.game_progress["completed_levels"]:
         $ persistent.game_progress["completed_levels"].append(persistent.game_progress["current_level"])
         $ persistent.game_progress["score"] += 20 # Add to score
-        $ save_progress()
+        $ persistent.game_progress["replay_status"] = "not replay"
     else:
+        $ persistent.game_progress["replay_status"] = "replay"
         $ persistent.game_progress["score"] += 1 # Add to score
+    
+    $ persistent.game_progress["level_status"] = "complete"
+    $ save_progress()
     return
-    #jump main_menu
+
+
+label level_failed:
+    # Updating data for analysis and game save
+    ## Updates for level failed
+    if persistent.game_progress["current_level"] in persistent.game_progress["completed_levels"]:
+        $ persistent.game_progress["replay_status"] = "replay"  
+    else:
+        $ persistent.game_progress["replay_status"] = "not replay"
+
+    $ persistent.game_progress["level_status"] = "failed"
+    $ persistent.game_progress["score"] -= 5 # Add to score
+    
+    $ save_progress()
+    return
 
 
 label first_level:
@@ -118,7 +140,9 @@ label access_granted:
     hide networker
     show player shock
     "You allowed an unauthorized person into the server room. If this were real, sensitive company data could now be compromised."
-    "GAME OVER."
+    "LEVEL FAILED!"
+    
+    jump level_failed
 
     return
 
