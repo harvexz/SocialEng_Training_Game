@@ -9,7 +9,15 @@ define networker = Character("Alex", image = "networker normal", kind = bubble)
 
 # The game starts here.
 
+
 label start:
+    if not persistent.game_progress["tutorial_seen"]:
+        jump tutorial
+    else:
+        jump main_menu
+
+
+label tutorial:
 
     # Show a background. This uses a placeholder by default, but you can
     # add a file (named either "bg room.png" or "bg room.jpg") to the
@@ -35,18 +43,38 @@ label start:
 
     menu:
         "I'm ready":
-            jump first_level
+            $ persistent.game_progress["tutorial_seen"] = True
+            $ persistent.game_progress["current_level"] = "first_level"  # Set next level
+            $ save_progress()
+            return
         
         "Wait im confused... say that again":
-            jump start
+            jump tutorial
 
     # This ends the game.
 
     return
 
+
+
+label level_complete:
+    "Level Complete!"
+    if persistent.game_progress["current_level"] not in persistent.game_progress["completed_levels"]:
+        $ persistent.game_progress["completed_levels"].append(persistent.game_progress["current_level"])
+        $ persistent.game_progress["score"] += 20 # Add to score
+        $ save_progress()
+    else:
+        $ persistent.game_progress["score"] += 1 # Add to score
+    return
+    #jump main_menu
+
+
 label first_level:
 
+    # $ persistent.game_progress["current_level"] = "level_1"  # Potentiall not needed after fix
+
     scene bg office
+    show screen top_bar
     show player happy
     with fade
 
@@ -67,6 +95,8 @@ label first_level:
 
         "We usually get emails about IT maintenance. I didn’t see one. Who sent you?":
             jump verify_story
+    
+    return
 
 label access_granted:
 
@@ -92,6 +122,7 @@ label access_granted:
 
     return
 
+
 label request_id:
 
     show networker happy
@@ -104,6 +135,7 @@ label request_id:
 
         "That’s fine, just give me your name and I’ll check the employee database.":  
             jump check_database
+
 
 label verify_story:
 
@@ -118,6 +150,7 @@ label verify_story:
         "That makes sense. I'll let you in.":  
             jump access_granted
 
+
 label deny_access:
 
     show networker angry
@@ -130,6 +163,7 @@ label deny_access:
 
         "Fine, go ahead.":  
             jump access_granted
+
 
 label check_database:
 
@@ -147,7 +181,10 @@ label check_database:
 
     "CONGRATULATIONS! You stopped a potential social engineering attack by verifying identity."
     
+    jump level_complete
+
     return
+
 
 label call_supervisor:
 
@@ -163,6 +200,8 @@ label call_supervisor:
 
     "GREAT JOB! You followed security procedures and prevented an unauthorized entry attempt."
 
+    jump level_complete
+
     return
 
 label insist_policy:
@@ -176,6 +215,8 @@ label insist_policy:
     "The person storms off angrily. Later, IT confirms they never sent anyone, meaning you just stopped an attempted breach."
 
     "EXCELLENT WORK! You enforced security policies and protected company assets."
+
+    jump level_complete
 
     return
 

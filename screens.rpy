@@ -354,24 +354,30 @@ screen main_menu():
 
     add gui.main_menu_background
 
-    ## This empty frame darkens the main menu.
     frame:
-        style "main_menu_frame"
+        xalign 0.99
+        yalign 0.02
+        background "#00000088"
+        padding (10, 5)
+        text "Score: [persistent.game_progress['score']]" color "#FFFFFF"
+    
+    vbox:
+            xalign 0.5
+            yalign 0.4
+            spacing 20
 
-    ## The use statement includes another screen inside this one. The actual
-    ## contents of the main menu are in the navigation screen.
-    use navigation
+            if persistent.game_progress and "current_level" in persistent.game_progress:
+                # $ persistent.game_progress["current_level"] = "first_level" For testing use - change for specific level
+                textbutton "Continue" action Start(persistent.game_progress["current_level"])
+            else:
+                textbutton "Continue" action NullAction()
+            textbutton "Play Previous Levels" action Show("level_select")
+            textbutton "View Stats" action Show("stats_screen")
+            
+            if persistent.game_progress["tutorial_seen"]:
+                textbutton "Replay Tutorial" action Start("tutorial")
 
-    if gui.show_name:
-
-        vbox:
-            style "main_menu_vbox"
-
-            text "[config.name!t]":
-                style "main_menu_title"
-
-            text "[config.version]":
-                style "main_menu_version"
+            textbutton "Quit" action Quit(confirm=True)
 
 
 style main_menu_frame is empty
@@ -1609,3 +1615,31 @@ style slider_vbox:
 style slider_slider:
     variant "small"
     xsize 900
+
+
+## Score Bar screen ############################################################
+##
+## Used to displays current level and score.
+
+screen top_bar():
+    frame:
+        xalign 0.99
+        yalign 0.02
+        background "#00000088"
+        padding (10, 5)
+        text "Score: [persistent.game_progress['score']]" color "#FFFFFF"
+        #text "Level: [persistent.game_progress['current_level']] | Score: [persistent.game_progress['score']]" color "#FFFFFF"
+
+
+## Level Selection screen ############################################################
+##
+## Used to allow players to replay any completed level.
+
+screen level_select():
+    vbox:
+        xalign 0.8
+        yalign 0.8
+        text "Select a Level" size 30
+        for level in persistent.game_progress["completed_levels"]:
+            textbutton level action Start(level)
+        textbutton "Back" action Return()
