@@ -1,0 +1,35 @@
+{
+    "access_granted_fb8ce53e": {
+        "area": [
+            720,
+            225,
+            480,
+            225
+        ]
+    },
+    "call_supervisor_51264fff": {
+        "area": [
+            720,
+            225,
+            480,
+            225
+        ]
+    },
+    "first_level_2241517e": {
+        "area": [
+            880,
+            135,
+            560,
+            270
+        ],
+        "properties": "bottom_right"
+    },
+    "insist_policy_ed896bbc": {
+        "area": [
+            720,
+            225,
+            480,
+            225
+        ]
+    }
+}
