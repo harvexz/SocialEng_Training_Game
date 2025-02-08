@@ -73,6 +73,15 @@ label level_complete:
     
     $ persistent.game_progress["level_status"] = "complete"
     $ save_progress()
+
+    # Update the current level pointer based on which level just finished.
+    if persistent.game_progress["current_level"] == "first_level":
+        $ persistent.game_progress["current_level"] = "second_level"
+    elif persistent.game_progress["current_level"] == "second_level":
+        $ persistent.game_progress["current_level"] = "second_level"
+    elif persistent.game_progress["current_level"] == "third_level":
+        $ persistent.game_progress["current_level"] = "second_level"
+    
     return
 
 
@@ -91,6 +100,7 @@ label level_failed:
     return
 
 
+############################## FIRST LEVEL ##############################
 label first_level:
 
     # $ persistent.game_progress["current_level"] = "level_1"  # Potentiall not needed after fix
@@ -119,6 +129,7 @@ label first_level:
             jump verify_story
     
     return
+
 
 label access_granted:
 
@@ -228,6 +239,7 @@ label call_supervisor:
 
     return
 
+
 label insist_policy:
 
     show networker angry
@@ -244,3 +256,33 @@ label insist_policy:
 
     return
 
+
+############################## SECOND LEVEL ##############################
+
+label second_level:
+    # $ persistent.game_progress["current_level"] = "level_2"
+    
+    scene bg office
+    show screen top_bar
+    show player happy
+    "Your manager has asked you to check your email inbox for potential phishing emails."
+    "Carefully examine each email and report any suspicious activity."
+    "Take your time, and check out the first email for some tips on what to look for."
+
+    hide player happy
+    show screen email_inbox
+    "Look throuhgly, click to continue once completed."
+    
+    show player happy
+    "Well done, you identified the emails correctly!! first time I hope..."
+    "You will now return to the menu..."
+    
+    return
+
+############################## THIRD LEVEL ##############################
+
+
+label third_level:
+    scene bg office
+    "Welcome to Level 3 – coming soon!"
+    return

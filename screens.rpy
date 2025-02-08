@@ -368,7 +368,7 @@ screen main_menu():
             spacing 20
 
             if persistent.game_progress and "current_level" in persistent.game_progress:
-                #$ persistent.game_progress["current_level"] = "first_level" For testing use - change for specific level
+                # $ persistent.game_progress["current_level"] = "second_level"  # For testing use - change for specific level
                 if persistent.game_progress["tutorial_seen"]:
                     textbutton "Continue" action Start(persistent.game_progress["current_level"]) text_style "main_menu_text"
                 else:
@@ -1648,3 +1648,87 @@ screen level_select():
         for level in persistent.game_progress["completed_levels"]:
             textbutton level action Start(level)
         textbutton "Back" action Return()
+
+
+## Email Inbox Interface Screen ############################################################
+##
+## Used to display fake emails.
+
+screen email_inbox():
+    modal True  # Ensures player must interact with this screen before continuing
+    frame:
+        xsize 800
+        ysize 500
+        background "#eeeeee"
+        align (0.5, 0.5)
+
+        vbox:
+            xalign 0.5
+            spacing 20
+            
+            text "Inbox - CyberCorp Email Client" size 30 bold True color "#555555"
+            
+            # Email list with buttons
+            viewport:
+                scrollbars "vertical"
+                draggable True
+                mousewheel True
+                xsize 750
+                ysize 450
+
+                vbox:
+                    spacing 5
+                    if persistent.all_emails_correct:
+                        timer 0.01 action [Hide("email_inbox")]
+                    else:
+                        for i, email in enumerate(persistent.emails): 
+                            textbutton email["subject"]:
+                                xsize 700
+                                action [SetVariable("selected_email_index", i), Show("email_view")]
+
+
+## Individual Email Interface Screen ############################################################
+##
+## Used to display individual emails.
+
+screen email_view():
+    modal True
+    frame:
+        xsize 800
+        ysize 500
+        background "#eeeeee"
+        align (0.5, 0.5)
+
+        vbox:
+            xalign 0.5
+            spacing 20
+
+            viewport:
+                scrollbars "vertical"
+                draggable True
+                mousewheel True
+                xsize 750
+                ysize 450
+
+                vbox:
+                    spacing 10
+                    xalign 0.5
+
+                    # Display Email Header
+                    text "To: You" size 20 bold True color "#555555" kerning 1.5
+                    text "From: [persistent.emails[selected_email_index]['from']]" size 20 bold True color "#555555" kerning 1.5
+                    text "Subject: [persistent.emails[selected_email_index]['subject']]" size 20 bold True color "#555555" kerning 1.5
+                    text "[persistent.emails[selected_email_index]['body']]" size 16 color "#222222" kerning 1.5
+
+                    hbox:
+                        spacing 20
+                        xalign 0.5
+
+                        textbutton "Report as Phishing":
+                            action [Function(check_email, True), Hide("email_view")]
+                        
+                        textbutton "Mark as Safe":
+                            action [Function(check_email, False), Hide("email_view")]
+                        
+                        textbutton "Close":
+                            action Hide("email_view")
