@@ -1641,50 +1641,281 @@ screen top_bar():
 ## Used to allow players to replay any completed level.
 
 screen level_select():
-    vbox:
-        xalign 0.8
-        yalign 0.8
-        text "Select a Level" size 30
-        for level in persistent.game_progress["completed_levels"]:
-            textbutton level action Start(level)
-        textbutton "Back" action Return()
-
+    tag menu
+    
+    # Store the current level before navigating to a previous level
+    python:
+        if not hasattr(store, "original_level"):
+            store.original_level = persistent.game_progress["current_level"]
+        
+        # Function to get a formatted level name
+        def get_formatted_level_name(level_id):
+            if level_id == "tutorial":
+                return "Tutorial"
+            elif level_id == "first_level":
+                return "Level 1: The Networker"
+            elif level_id == "second_level":
+                return "Level 2: Check your mail!"
+            elif level_id == "third_level":
+                return "Level 3: Insider Threat"
+            else:
+                return level_id
+    
+    add gui.game_menu_background
+    
+    frame:
+        xalign 0.5
+        yalign 0.5
+        xsize 900
+        ysize 600
+        background "#00000088"
+        padding (30, 30)
+        
+        vbox:
+            spacing 20
+            
+            text "Play Previous Levels" size 40 xalign 0.5 color "#FFFFFF"
+            
+            null height 10
+            
+            # Current level indicator
+            frame:
+                background "#FFFFFF22"
+                padding (15, 15)
+                xfill True
+                
+                vbox:
+                    spacing 5
+                    xalign 0.5
+                    
+                    $ formatted_current_level = get_formatted_level_name(persistent.game_progress["current_level"])
+                    text "Current Level: [formatted_current_level]" size 20 color "#FFFFFF" xalign 0.5
+                    text "You will return to this level after playing a previous level" size 16 color "#CCCCCC" xalign 0.5
+            
+            null height 10
+            
+            # Level selection area with scrollbar
+            frame:
+                background "#FFFFFF22"
+                padding (20, 20)
+                xfill True
+                ysize 320  # Fixed height for scrollable area
+                
+                viewport:
+                    scrollbars "vertical"
+                    mousewheel True
+                    draggable True
+                    yinitial 0.0
+                    
+                    vbox:
+                        spacing 15
+                        xfill True
+                        
+                        text "Available Levels" size 24 color "#FFFFFF" bold True xalign 0.5
+                        
+                        null height 10
+                        
+                        # Tutorial is always available
+                        frame:
+                            background "#333333"
+                            padding (15, 15)
+                            xfill True
+                            
+                            hbox:
+                                spacing 20
+                                
+                                vbox:
+                                    xsize 600
+                                    spacing 5
+                                    
+                                    text "Tutorial" size 22 color "#FFFFFF" bold True
+                                    text "Learn the basics of the game" size 16 color "#CCCCCC"
+                                
+                                button:
+                                    xalign 1.0
+                                    yalign 0.5
+                                    action [SetVariable("persistent.game_progress['temp_level']", persistent.game_progress["current_level"]), 
+                                            Start("tutorial")]
+                                    
+                                    frame:
+                                        background "#0099cc"
+                                        padding (15, 10)
+                                        hover_background "#66c1e0"
+                                        
+                                        text "Play" size 18 color "#FFFFFF"
+                        
+                        # Level 1 is always available
+                        frame:
+                            background "#333333"
+                            padding (15, 15)
+                            xfill True
+                            
+                            hbox:
+                                spacing 20
+                                
+                                vbox:
+                                    xsize 600
+                                    spacing 5
+                                    
+                                    text "Level 1: The Networker" size 22 color "#FFFFFF" bold True
+                                    text "Learn to identify and respond to social engineering attempts" size 16 color "#CCCCCC"
+                                
+                                button:
+                                    xalign 1.0
+                                    yalign 0.5
+                                    action [SetVariable("persistent.game_progress['temp_level']", persistent.game_progress["current_level"]), 
+                                            Start("first_level")]
+                                    
+                                    frame:
+                                        background "#0099cc"
+                                        padding (15, 10)
+                                        hover_background "#66c1e0"
+                                        
+                                        text "Play" size 18 color "#FFFFFF"
+                        
+                        # Level 2 is available if Level 1 is completed
+                        if "first_level" in persistent.game_progress["completed_levels"]:
+                            frame:
+                                background "#333333"
+                                padding (15, 15)
+                                xfill True
+                                
+                                hbox:
+                                    spacing 20
+                                    
+                                    vbox:
+                                        xsize 600
+                                        spacing 5
+                                        
+                                        text "Level 2: Check your mail!" size 22 color "#FFFFFF" bold True
+                                        text "Identify and report phishing emails" size 16 color "#CCCCCC"
+                                    
+                                    button:
+                                        xalign 1.0
+                                        yalign 0.5
+                                        action [SetVariable("persistent.game_progress['temp_level']", persistent.game_progress["current_level"]), 
+                                                Function(reset_email_status),
+                                                Start("second_level")]
+                                        
+                                        frame:
+                                            background "#0099cc"
+                                            padding (15, 10)
+                                            hover_background "#66c1e0"
+                                            
+                                            text "Play" size 18 color "#FFFFFF"
+                        
+                        # Level 3 is available if Level 2 is completed
+                        if "second_level" in persistent.game_progress["completed_levels"]:
+                            frame:
+                                background "#333333"
+                                padding (15, 15)
+                                xfill True
+                                
+                                hbox:
+                                    spacing 20
+                                    
+                                    vbox:
+                                        xsize 600
+                                        spacing 5
+                                        
+                                        text "Level 3: Insider Threat" size 22 color "#FFFFFF" bold True
+                                        text "Navigate complex security scenarios and respond to insider threats" size 16 color "#CCCCCC"
+                                    
+                                    button:
+                                        xalign 1.0
+                                        yalign 0.5
+                                        action [SetVariable("persistent.game_progress['temp_level']", persistent.game_progress["current_level"]), 
+                                                Start("third_level")]
+                                        
+                                        frame:
+                                            background "#0099cc"
+                                            padding (15, 10)
+                                            hover_background "#66c1e0"
+                                            
+                                            text "Play" size 18 color "#FFFFFF"
+            
+            null height 10
+            
+            # Return button
+            button:
+                xalign 0.5
+                action Return()
+                
+                frame:
+                    background "#555555"
+                    padding (20, 10)
+                    hover_background "#777777"
+                    
+                    text "Return to Main Menu" size 20 color "#FFFFFF"
 
 ## Email Inbox Interface Screen ############################################################
 ##
 ## Used to display fake emails.
 
+# Define the resizable background with rounded corners
+image email_window = Frame("gui/email_assets/email_window.png", 20, 20, 20, 20)
+image email_hover_rec = Frame("gui/email_assets/email_hover_rec.png", 20, 20, 20, 20)
+image email_rec = Frame("gui/email_assets/email_rec.png", 20, 20, 20, 20)
+
 screen email_inbox():
     modal True  # Ensures player must interact with this screen before continuing
+
+    # Initialize selected_email_index if not defined
+    default selected_email_index = -1
+
     frame:
         xsize 800
         ysize 500
-        background "#eeeeee"
+        padding (20, 20)
         align (0.5, 0.5)
+        background "email_window"  # Use the defined Frame as the background
 
         vbox:
-            xalign 0.5
             spacing 20
-            
-            text "Inbox - CyberCorp Email Client" size 30 bold True color "#555555"
-            
-            # Email list with buttons
+            xalign 0.5
+
+            text "Inbox" size 40 bold True color "#000000"  # Title
+
             viewport:
                 scrollbars "vertical"
                 draggable True
                 mousewheel True
                 xsize 750
-                ysize 450
+                ysize 400
 
                 vbox:
-                    spacing 5
+                    spacing 10
+
                     if persistent.all_emails_correct:
                         timer 0.01 action [Hide("email_inbox")]
                     else:
-                        for i, email in enumerate(persistent.emails): 
-                            textbutton email["subject"]:
+                        for i, email in enumerate(persistent.emails):
+                            $ is_selected = (i == selected_email_index)
+                            $ answered_correctly = persistent.emails[i].get("answered_correctly", False)
+
+                            button:
                                 xsize 700
+                                background "email_rec"
+                                hover_background "email_hover_rec"  # Changes background on hover
+                                padding (15, 10)
                                 action [SetVariable("selected_email_index", i), Show("email_view")]
+
+                                hbox:
+                                    spacing 10
+                                    xalign 0.0
+
+                                    # Indicator Dot
+                                    if answered_correctly:
+                                        add Solid("#b5b5b5", xsize=10, ysize=10)  # Green dot for correct
+                                    else:
+                                        add Solid("#0000FF", xsize=10, ysize=10)  # Blue dot otherwise
+
+                                    vbox:
+                                        spacing 5
+                                        text "From: [email['from']]" size 20 bold True color "#000000"
+                                        text "[email['subject']]" size 16 color "#000000"
+
+
 
 
 ## Individual Email Interface Screen ############################################################
@@ -1696,7 +1927,8 @@ screen email_view():
     frame:
         xsize 800
         ysize 500
-        background "#eeeeee"
+        padding (20, 20)
+        background "email_window" 
         align (0.5, 0.5)
 
         vbox:
@@ -1732,3 +1964,799 @@ screen email_view():
                         
                         textbutton "Close":
                             action Hide("email_view")
+
+## Phone Interface Screen ############################################################
+##
+## Used for the phone call challenge in level 3.
+
+image phone_bg = Frame("gui/phone_assets/phone_bg.png", 20, 20, 20, 20)
+
+screen phone_interface():
+    modal False  # Changed to False to allow clicking anywhere to progress
+    frame:
+        xsize 400
+        ysize 700
+        background "phone_bg"
+        align (0.75, 0.5)
+
+        vbox:
+            spacing 15
+            xalign 0.5
+            yalign 0.5
+
+            text "Incoming Call" size 24 xalign 0.5 color "#000000"
+            text "Unknown Number" size 20 xalign 0.5 color "#000000"
+            
+            null height 20
+            
+            text "Call in progress..." size 18 xalign 0.5 color "#555555"
+            
+            null height 150  # Increased to move button down
+            
+            hbox:
+                spacing 30
+                xalign 0.5
+                
+                imagebutton:
+                    idle "gui/phone_assets/end_call.png"
+                    hover "gui/phone_assets/end_call_hover.png"
+                    action Show("end_call_confirmation")
+                    tooltip "End Call"
+
+## End Call Confirmation Screen ############################################################
+##
+## Confirmation dialog for ending a phone call.
+
+screen end_call_confirmation():
+    modal True
+    zorder 200
+    
+    frame:
+        xalign 0.5
+        yalign 0.5
+        xsize 500
+        ysize 250
+        background "#FFFFFF"
+        
+        vbox:
+            spacing 20
+            xalign 0.5
+            yalign 0.5
+            
+            text "Are you sure you want to end the call?" size 22 xalign 0.5 color "#000000"
+            text "You could be hanging up on a legitimate caller." size 18 xalign 0.5 color "#555555"
+            
+            null height 20
+            
+            hbox:
+                spacing 50
+                xalign 0.5
+                
+                textbutton "End Call":
+                    action [Hide("end_call_confirmation"), Return()]
+                
+                textbutton "Continue Call":
+                    action Hide("end_call_confirmation")
+
+## Chat Interface Screen ############################################################
+##
+## Used for the chat challenge in level 3.
+
+image chat_bg = Frame("gui/chat_assets/chat_bg.png", 20, 20, 20, 20)
+image chat_bubble_them = Frame("gui/chat_assets/chat_bubble_them.png", 20, 20, 20, 20)
+image chat_bubble_you = Frame("gui/chat_assets/chat_bubble_you.png", 20, 20, 20, 20)
+
+screen chat_interface():
+    modal False  # Changed to False to allow clicking anywhere to progress
+    frame:
+        xsize 700
+        ysize 500
+        background "chat_bg"
+        align (0.5, 0.5)
+
+        vbox:
+            spacing 10
+            xalign 0.5
+            yalign 0.5
+
+            frame:
+                background "#444444"
+                xsize 680
+                padding (10, 5)
+                
+                hbox:
+                    spacing 10
+                    
+                    text "Chat with: Sarah_Finance" size 20 color "#FFFFFF"
+                    
+                    textbutton "X":
+                        action Show("chat_exit_confirmation")
+                        xalign 1.0
+
+            viewport:
+                id "chat_viewport"
+                xsize 680
+                ysize 400
+                scrollbars "vertical"
+                mousewheel True
+                draggable True
+                
+                vbox:
+                    spacing 15
+                    xfill True
+                    
+                    # Initial message from Sarah
+                    frame:
+                        background "chat_bubble_them"
+                        xsize 500
+                        xalign 0.0
+                        padding (15, 10)
+                        
+                        text "Hi there! I'm working on reconciling some accounts and need the latest financial report for project Falcon. Can you send it to me?" size 16 color "#000000"
+                    
+                    # If the player has made a choice, show it
+                    if "_last_choice" in globals() and _last_choice:
+                        frame:
+                            background "chat_bubble_you"
+                            xsize 500
+                            xalign 1.0
+                            padding (15, 10)
+                            
+                            text _last_choice size 16 color "#000000"
+                    
+                    # If Sarah has responded, show her response
+                    if "_last_sarah_message" in globals() and "_last_choice" in globals() and _last_choice:
+                        frame:
+                            background "chat_bubble_them"
+                            xsize 500
+                            xalign 0.0
+                            padding (15, 10)
+                            
+                            text _last_sarah_message size 16 color "#000000"
+
+## Chat Exit Confirmation Screen ############################################################
+##
+## Confirmation dialog for exiting a chat.
+
+screen chat_exit_confirmation():
+    modal True
+    zorder 200
+    
+    frame:
+        xalign 0.5
+        yalign 0.5
+        xsize 500
+        ysize 250
+        background "#FFFFFF"
+        
+        vbox:
+            spacing 20
+            xalign 0.5
+            yalign 0.5
+            
+            text "Are you sure you want to exit this chat?" size 22 xalign 0.5 color "#000000"
+            text "You may need to verify the sender's identity first." size 18 xalign 0.5 color "#555555"
+            
+            null height 20
+            
+            hbox:
+                spacing 50
+                xalign 0.5
+                
+                textbutton "Exit Chat":
+                    action [Hide("chat_exit_confirmation"), Return()]
+                
+                textbutton "Continue Chat":
+                    action Hide("chat_exit_confirmation")
+
+## Document Interface Screen ############################################################
+##
+## Used for the document review challenge in level 3.
+
+image document_bg = Frame("gui/document_assets/document_bg.png", 20, 20, 20, 20)
+
+screen document_interface():
+    modal False  # Changed to False to allow clicking anywhere to progress
+    frame:
+        xsize 800
+        ysize 600
+        background "document_bg"
+        align (0.5, 0.5)
+
+        vbox:
+            spacing 15
+            xalign 0.5
+            yalign 0.5
+
+            frame:
+                background "#FFFFFF"
+                xsize 750
+                ysize 500
+                padding (20, 20)
+                
+                vbox:
+                    spacing 10
+                    
+                    text "INVOICE" size 30 bold True xalign 0.5 color "#000000"
+                    
+                    null height 10
+                    
+                    grid 2 4:
+                        xfill True
+                        spacing 10
+                        
+                        text "Invoice #:" size 16 bold True color "#000000"
+                        text "INV-29384-XZ" size 16 color "#000000"
+                        
+                        text "Date:" size 16 bold True color "#000000"
+                        text "October 15, 2023" size 16 color "#000000"
+                        
+                        text "Bill To:" size 16 bold True color "#000000"
+                        text "CyberCorp Inc." size 16 color "#000000"
+                        
+                        text "Amount Due:" size 16 bold True color "#000000"
+                        text "$12,450.00" size 16 color "#000000"
+                    
+                    null height 20
+                    
+                    text "Payment Instructions:" size 18 bold True color "#000000"
+                    text "Please remit payment to:" size 16 color "#000000"
+                    text "Bank: First National Bank" size 16 color "#000000"
+                    text "Account: 9834-5678-1234" size 16 color "#000000"
+                    text "Routing: 021-456-789" size 16 color "#000000"
+                    
+                    null height 20
+                    
+                    text "Note: Due to recent system changes, please use the new banking details above." size 14 italic True color "#FF0000"
+            
+            hbox:
+                spacing 30
+                xalign 0.5
+                
+                textbutton "Close Document":
+                    action Show("document_exit_confirmation")
+
+## Document Exit Confirmation Screen ############################################################
+##
+## Confirmation dialog for closing a document.
+
+screen document_exit_confirmation():
+    modal True
+    zorder 200
+    
+    frame:
+        xalign 0.5
+        yalign 0.5
+        xsize 500
+        ysize 250
+        background "#FFFFFF"
+        
+        vbox:
+            spacing 20
+            xalign 0.5
+            yalign 0.5
+            
+            text "Are you sure you want to close this document?" size 22 xalign 0.5 color "#000000"
+            text "You may need to verify the document details first." size 18 xalign 0.5 color "#555555"
+            
+            null height 20
+            
+            hbox:
+                spacing 50
+                xalign 0.5
+                
+                textbutton "Close Document":
+                    action [Hide("document_exit_confirmation"), Return()]
+                
+                textbutton "Continue Reviewing":
+                    action Hide("document_exit_confirmation")
+
+## Score Panel Screen ############################################################
+##
+## Used to display the player's score and rank.
+
+screen score_panel():
+    frame:
+        xalign 0.99
+        yalign 0.1
+        background "#00000088"
+        padding (15, 10)
+        
+        vbox:
+            spacing 5
+            
+            text "Score: [persistent.game_progress['score']]" color "#FFFFFF" size 20
+            
+            $ player_score = persistent.game_progress['score']
+            
+            if player_score >= 100:
+                $ player_rank = "Expert"
+            elif player_score >= 50:
+                $ player_rank = "Intermediate"
+            else:
+                $ player_rank = "Novice"
+                
+            text "Rank: [player_rank]" color "#FFFFFF" size 18
+            
+            # Progress bar to next rank
+            if player_rank == "Novice":
+                $ progress_value = float(player_score) / 50.0
+                $ next_rank = "Intermediate"
+            elif player_rank == "Intermediate":
+                $ progress_value = float(player_score - 50) / 50.0
+                $ next_rank = "Expert"
+            else:
+                $ progress_value = 1.0
+                $ next_rank = "Elite"
+                
+            text "Progress to [next_rank]:" color "#FFFFFF" size 14
+            bar value progress_value range 1.0 xsize 150 ysize 10
+
+## Stats Screen ############################################################
+##
+## Used to display player achievements and progress statistics.
+
+screen stats_screen():
+    tag menu
+    
+    add gui.game_menu_background
+    
+    frame:
+        xalign 0.5
+        yalign 0.5
+        xsize 900
+        ysize 600
+        background "#00000088"
+        padding (30, 30)
+        
+        vbox:
+            spacing 20
+            
+            text "Player Statistics" size 40 xalign 0.5 color "#FFFFFF"
+            
+            null height 10
+            
+            hbox:
+                spacing 40
+                
+                # Left column - Score and Rank
+                vbox:
+                    spacing 15
+                    xsize 400
+                    
+                    text "Score and Rank" size 24 color "#FFFFFF" bold True
+                    
+                    frame:
+                        background "#FFFFFF22"
+                        padding (15, 15)
+                        
+                        vbox:
+                            spacing 10
+                            
+                            text "Current Score: [persistent.game_progress['score']]" size 18 color "#FFFFFF"
+                            text "Current Rank: [persistent.rank_data['current_rank']]" size 18 color "#FFFFFF"
+                            
+                            null height 5
+                            
+                            text "Progress to Next Rank:" size 16 color "#FFFFFF"
+                            
+                            $ current_rank = persistent.rank_data['current_rank']
+                            $ score = persistent.game_progress['score']
+                            
+                            if current_rank == "Elite":
+                                $ progress_value = 1.0
+                                $ next_rank = "Max Rank"
+                                $ points_needed = 0
+                            elif current_rank == "Expert":
+                                $ progress_value = float(score - 100) / 100.0
+                                $ next_rank = "Elite"
+                                $ points_needed = 200 - score
+                            elif current_rank == "Intermediate":
+                                $ progress_value = float(score - 50) / 50.0
+                                $ next_rank = "Expert"
+                                $ points_needed = 100 - score
+                            else:
+                                $ progress_value = float(score) / 50.0
+                                $ next_rank = "Intermediate"
+                                $ points_needed = 50 - score
+                            
+                            bar value progress_value range 1.0 xsize 350 ysize 15
+                            text "[points_needed] points needed for [next_rank]" size 14 color "#FFFFFF"
+                    
+                    null height 10
+                    
+                    text "Completed Levels" size 24 color "#FFFFFF" bold True
+                    
+                    frame:
+                        background "#FFFFFF22"
+                        padding (15, 15)
+                        
+                        vbox:
+                            spacing 5
+                            
+                            if len(persistent.game_progress["completed_levels"]) == 0:
+                                text "No levels completed yet" size 18 color "#FFFFFF"
+                            else:
+                                for level in persistent.game_progress["completed_levels"]:
+                                    text "• [level]" size 18 color "#FFFFFF"
+                
+                # Right column - Achievements
+                vbox:
+                    spacing 15
+                    xsize 400
+                    
+                    text "Achievements" size 24 color "#FFFFFF" bold True
+                    
+                    frame:
+                        background "#FFFFFF22"
+                        padding (15, 15)
+                        
+                        vbox:
+                            spacing 10
+                            
+                            $ achievement_count = sum(1 for a in persistent.achievements.values() if a)
+                            $ total_achievements = len(persistent.achievements)
+                            
+                            text "Unlocked: [achievement_count]/[total_achievements]" size 18 color "#FFFFFF"
+                            
+                            null height 10
+                            
+                            for name, unlocked in persistent.achievements.items():
+                                hbox:
+                                    spacing 10
+                                    
+                                    if unlocked:
+                                        add "gui/button/check_selected_foreground.png" zoom 0.5
+                                    else:
+                                        add "gui/button/check_foreground.png" zoom 0.5
+                                    
+                                    if name == "quick_thinker":
+                                        text "Quick Thinker - Make fast decisions under pressure" size 16 color "#FFFFFF"
+                                    elif name == "vigilant_observer":
+                                        text "Vigilant Observer - Correctly identify multiple phishing attempts" size 16 color "#FFFFFF"
+                                    elif name == "security_expert":
+                                        text "Security Expert - Complete all levels" size 16 color "#FFFFFF"
+                                    elif name == "perfect_score":
+                                        text "Perfect Score - Get a perfect score on any level" size 16 color "#FFFFFF"
+                                    elif name == "level_three_master":
+                                        text "Level Three Master - Achieve Expert rank in Level 3" size 16 color "#FFFFFF"
+                                    elif name == "security_responder":
+                                        text "Security Responder - Excel at the Security Breach Response game" size 16 color "#FFFFFF"
+            
+            null height 20
+            
+            textbutton "Return to Main Menu" action Return() xalign 0.5
+
+## Countdown Timer Screen ############################################################
+##
+## Used for timed challenges in level 3.
+
+screen countdown_timer(duration):
+    zorder 100
+    
+    default timer_value = duration
+    default timer_bar_value = 1.0
+    
+    timer 0.1 repeat True action If(
+        timer_active,
+        [
+            SetScreenVariable("timer_value", timer_value - 0.1),
+            SetScreenVariable("timer_bar_value", timer_value / duration),
+            If(
+                timer_value <= 0,
+                [SetVariable("timer_active", False), Return("timeout")]
+            )
+        ],
+        NullAction()
+    )
+    
+    frame:
+        xalign 0.5
+        yalign 0.05
+        background "#00000088"
+        padding (15, 10)
+        
+        vbox:
+            spacing 5
+            xalign 0.5
+            
+            text "Time Remaining: {:.1f}".format(timer_value) color "#FFFFFF" size 18 xalign 0.5
+            
+            bar value timer_bar_value range 1.0 xsize 200 ysize 15
+            
+            if timer_value <= 5.0:
+                text "Hurry!" color "#FF0000" size 16 xalign 0.5
+
+## Security Breach Game Screen ############################################################
+##
+## Used for the Security Breach Response mini-game in level 3.
+
+init python:
+    import random
+    import math
+    
+    # Node class for network nodes
+    class NetworkNode:
+        def __init__(self, id, x, y, type="server"):
+            self.id = id
+            self.x = x
+            self.y = y
+            self.type = type
+            self.vulnerable = False
+            self.under_attack = False
+        
+        def make_vulnerable(self):
+            self.vulnerable = True
+        
+        def patch(self):
+            self.vulnerable = False
+            # Return points based on node type
+            if self.type == "server":
+                return 15  # Servers are worth more points
+            elif self.type == "router":
+                return 10  # Routers are medium value
+            else:  # workstation
+                return 5   # Workstations are worth less
+    
+    # Attacker class for network attackers
+    class Attacker:
+        def __init__(self, id, target_node):
+            self.id = id
+            self.target_node = target_node
+            # Start at a random edge of the screen
+            edge = random.randint(0, 3)  # 0: top, 1: right, 2: bottom, 3: left
+            if edge == 0:
+                self.x = random.randint(100, 1820)
+                self.y = 50
+            elif edge == 1:
+                self.x = 1870
+                self.y = random.randint(100, 980)
+            elif edge == 2:
+                self.x = random.randint(100, 1820)
+                self.y = 1030
+            else:
+                self.x = 50
+                self.y = random.randint(100, 980)
+            
+            # Different types of attackers with different speeds
+            self.attacker_type = random.choice(["basic", "advanced", "elite"])
+            if self.attacker_type == "basic":
+                self.speed = random.uniform(0.8, 1.5)
+                self.color = "#FF0000"  # Red
+            elif self.attacker_type == "advanced":
+                self.speed = random.uniform(1.5, 2.5)
+                self.color = "#FF6600"  # Orange
+            else:  # elite
+                self.speed = random.uniform(2.5, 4.0)
+                self.color = "#FF00FF"  # Purple
+            
+            self.reached_target = False
+        
+        def move(self):
+            if not self.reached_target:
+                # Calculate direction to target
+                dx = self.target_node.x - self.x
+                dy = self.target_node.y - self.y
+                distance = math.sqrt(dx*dx + dy*dy)
+                
+                if distance < 10:
+                    self.reached_target = True
+                    return True
+                
+                # Normalize and apply speed
+                dx = dx / distance * self.speed
+                dy = dy / distance * self.speed
+                
+                self.x += dx
+                self.y += dy
+            
+            return False
+    
+    # Game state variables
+    network_nodes = []
+    attackers = []
+    game_time = 60.0
+    spawn_timer = 0.0
+    attacker_timer = 0.0
+    security_game_score = 0
+    vulnerabilities_patched = 0
+    attacks_prevented = 0
+    attacks_succeeded = 0
+    
+    # Initialize the network
+    def init_network():
+        global network_nodes
+        network_nodes = []
+        
+        # Create a grid of nodes
+        for i in range(5):
+            for j in range(4):
+                x = 300 + i * 300
+                y = 200 + j * 200
+                node_type = random.choice(["server", "workstation", "router"])
+                network_nodes.append(NetworkNode(len(network_nodes), x, y, node_type))
+    
+    # Spawn a new vulnerability
+    def spawn_vulnerability():
+        global network_nodes
+        
+        # Find nodes that aren't already vulnerable
+        available_nodes = [node for node in network_nodes if not node.vulnerable]
+        
+        if available_nodes:
+            node = random.choice(available_nodes)
+            node.make_vulnerable()
+    
+    # Spawn a new attacker
+    def spawn_attacker():
+        global network_nodes, attackers
+        
+        # Find vulnerable nodes
+        vulnerable_nodes = [node for node in network_nodes if node.vulnerable]
+        
+        if vulnerable_nodes:
+            target_node = random.choice(vulnerable_nodes)
+            attackers.append(Attacker(len(attackers), target_node))
+            return True
+        
+        return False
+    
+    # Patch a vulnerability
+    def patch_vulnerability(node_id):
+        global network_nodes, security_game_score, vulnerabilities_patched, attacks_prevented
+        
+        for node in network_nodes:
+            if node.id == node_id and node.vulnerable:
+                points = node.patch()
+                security_game_score += points
+                vulnerabilities_patched += 1
+                
+                # Check if any attackers were targeting this node and count as prevented
+                for attacker in list(attackers):
+                    if attacker.target_node.id == node_id:
+                        attackers.remove(attacker)
+                        attacks_prevented += 1
+                        security_game_score += 10  # Bonus for preventing an attack
+                
+                # Show a notification
+                renpy.notify("Vulnerability patched! +{} points".format(points))
+                return True
+        
+        return False
+    
+    # Update game state
+    def update_game(dt):
+        global game_time, spawn_timer, attacker_timer, attackers, security_game_score, attacks_prevented, attacks_succeeded
+        
+        # Update timers
+        game_time -= dt
+        spawn_timer -= dt
+        attacker_timer -= dt
+        
+        # Check if game is over
+        if game_time <= 0:
+            # Game over - jump to results
+            renpy.jump("security_game_results")
+            return True
+        
+        # Spawn new vulnerabilities
+        if spawn_timer <= 0:
+            spawn_vulnerability()
+            spawn_timer = random.uniform(2.0, 5.0)
+        
+        # Spawn new attackers
+        if attacker_timer <= 0:
+            # Only try to spawn attackers if there are vulnerable nodes
+            if any(node.vulnerable for node in network_nodes):
+                if spawn_attacker():
+                    attacker_timer = random.uniform(3.0, 7.0)
+            else:
+                attacker_timer = 1.0  # Check again soon
+        
+        # Update attackers
+        new_attackers = []
+        for attacker in attackers:
+            if attacker.target_node.vulnerable:
+                # If the target is still vulnerable, move toward it
+                if attacker.move():
+                    # Attacker reached the target
+                    attacker.target_node.vulnerable = False
+                    security_game_score -= 15
+                    attacks_succeeded += 1
+                else:
+                    new_attackers.append(attacker)
+            else:
+                # Target was patched, count as prevented
+                attacks_prevented += 1
+        
+        attackers = new_attackers
+        
+        return game_time <= 0
+
+screen security_breach_game():
+    # Initialize the game on first show
+    on "show" action [
+        SetVariable("game_time", 60.0),
+        SetVariable("spawn_timer", 2.0),
+        SetVariable("attacker_timer", 3.0),
+        SetVariable("security_game_score", 0),
+        SetVariable("vulnerabilities_patched", 0),
+        SetVariable("attacks_prevented", 0),
+        SetVariable("attacks_succeeded", 0),
+        Function(init_network)
+    ]
+    
+    # Update the game state every 0.1 seconds
+    timer 0.1 repeat True action If(
+        Function(update_game, 0.1),
+        Return(),
+        NullAction()
+    )
+    
+    frame:
+        background "#000000"
+        xfill True
+        yfill True
+        
+        # Game title and timer
+        frame:
+            background "#333333"
+            xalign 0.5
+            ypos 20
+            padding (20, 10)
+            
+            hbox:
+                spacing 50
+                
+                text "Security Breach Response" size 30 color "#FFFFFF"
+                text "Time: {:.1f}".format(game_time) size 30 color "#FFFFFF"
+                text "Score: [security_game_score]" size 30 color "#FFFFFF"
+        
+        # Game stats
+        frame:
+            background "#333333"
+            xalign 0.95
+            yalign 0.95
+            padding (15, 10)
+            
+            vbox:
+                spacing 5
+                
+                text "Vulnerabilities Patched: [vulnerabilities_patched]" size 18 color "#FFFFFF"
+                text "Attacks Prevented: [attacks_prevented]" size 18 color "#FFFFFF"
+                text "Attacks Succeeded: [attacks_succeeded]" size 18 color "#FFFFFF"
+        
+        # Network nodes
+        for node in network_nodes:
+            frame:
+                background ("#444444" if not node.vulnerable else "#FFCC00")
+                xpos node.x - 40
+                ypos node.y - 40
+                xsize 80
+                ysize 80
+                
+                button:
+                    action Function(patch_vulnerability, node.id)
+                    xfill True
+                    yfill True
+                    
+                    vbox:
+                        xalign 0.5
+                        yalign 0.5
+                        
+                        text node.type.capitalize() size 14 xalign 0.5 yalign 0.5 color "#FFFFFF"
+                        
+                        if node.vulnerable:
+                            text "VULNERABLE" size 12 xalign 0.5 color "#FF0000"
+        
+        # Attackers
+        for attacker in attackers:
+            frame:
+                background attacker.color
+                xpos attacker.x - 10
+                ypos attacker.y - 10
+                xsize 20
+                ysize 20
+                
+                # Add a tooltip to show attacker type
+                tooltip "Type: [attacker.attacker_type.capitalize()]"

@@ -15,6 +15,14 @@
             225
         ]
     },
+    "call_supervisor_e663a46e": {
+        "area": [
+            720,
+            270,
+            480,
+            225
+        ]
+    },
     "check_database_76a9da3c": {
         "area": [
             880,
@@ -37,6 +45,15 @@
             135,
             560,
             270
+        ],
+        "properties": "bottom_right"
+    },
+    "first_level_697c497e": {
+        "area": [
+            800,
+            180,
+            640,
+            315
         ],
         "properties": "bottom_right"
     },
