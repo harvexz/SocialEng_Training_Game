@@ -1667,11 +1667,11 @@ screen level_select():
         xalign 0.5
         yalign 0.5
         xsize 900
-        ysize 600
+        ysize 630
         background "#00000088"
         padding (30, 30)
         
-        vbox:
+    vbox:
             spacing 20
             
             text "Play Previous Levels" size 40 xalign 0.5 color "#FFFFFF"
@@ -1699,7 +1699,7 @@ screen level_select():
                 background "#FFFFFF22"
                 padding (20, 20)
                 xfill True
-                ysize 320  # Fixed height for scrollable area
+                ysize 350  # Fixed height for scrollable area
                 
                 viewport:
                     scrollbars "vertical"
@@ -2047,39 +2047,31 @@ image chat_bubble_them = Frame("gui/chat_assets/chat_bubble_them.png", 20, 20, 2
 image chat_bubble_you = Frame("gui/chat_assets/chat_bubble_you.png", 20, 20, 20, 20)
 
 screen chat_interface():
-    modal False  # Changed to False to allow clicking anywhere to progress
+    modal False  # Allow clicking anywhere to progress
     frame:
         xsize 700
         ysize 500
-        background "chat_bg"
-        align (0.5, 0.5)
-
+        background "email_window"  # Use the same background as email for consistency
+        align (0.5, 0.3)  # Move up by 300 pixels as requested
+        
         vbox:
             spacing 10
             xalign 0.5
-            yalign 0.5
-
-            frame:
-                background "#444444"
-                xsize 680
-                padding (10, 5)
-                
-                hbox:
-                    spacing 10
-                    
-                    text "Chat with: Sarah_Finance" size 20 color "#FFFFFF"
-                    
-                    textbutton "X":
-                        action Show("chat_exit_confirmation")
-                        xalign 1.0
-
+            yalign 0.0
+            
+            # Header with improved formatting
+            text "Chat with Sarah - Finance" size 20 bold True color "#555555" kerning 1.5 xalign 0.5
+            
+            null height 10
+            
             viewport:
                 id "chat_viewport"
-                xsize 680
+                xsize 670  # Reduced width to add padding from scrollbar
                 ysize 400
                 scrollbars "vertical"
                 mousewheel True
                 draggable True
+                yinitial 1.0  # Start at the bottom
                 
                 vbox:
                     spacing 15
@@ -2087,32 +2079,41 @@ screen chat_interface():
                     
                     # Initial message from Sarah
                     frame:
-                        background "chat_bubble_them"
+                        background "#EEEEEE"  # Grey box for Sarah's messages
                         xsize 500
                         xalign 0.0
                         padding (15, 10)
                         
-                        text "Hi there! I'm working on reconciling some accounts and need the latest financial report for project Falcon. Can you send it to me?" size 16 color "#000000"
+                        vbox:
+                            spacing 5
+                            text "Hi there! I'm working on reconciling some accounts and need the latest financial report for project Falcon. Can you send it to me?" size 16 color "#000000"
+                            text "Sarah" size 12 color "#888888" xalign 0.0
                     
-                    # If the player has made a choice, show it
-                    if "_last_choice" in globals() and _last_choice:
-                        frame:
-                            background "chat_bubble_you"
-                            xsize 500
-                            xalign 1.0
-                            padding (15, 10)
-                            
-                            text _last_choice size 16 color "#000000"
-                    
-                    # If Sarah has responded, show her response
-                    if "_last_sarah_message" in globals() and "_last_choice" in globals() and _last_choice:
-                        frame:
-                            background "chat_bubble_them"
-                            xsize 500
-                            xalign 0.0
-                            padding (15, 10)
-                            
-                            text _last_sarah_message size 16 color "#000000"
+                    # Display all messages in the conversation history
+                    if "_chat_history" in globals() and _chat_history:
+                        for msg in _chat_history:
+                            if msg["sender"] == "you":
+                                frame:
+                                    background "#0099cc"  # Blue box for your messages
+                                    xsize 500
+                                    xalign 1.0
+                                    padding (15, 10)
+                                    
+                                    vbox:
+                                        spacing 5
+                                        text msg["text"] size 16 color "#FFFFFF"
+                                        text "You" size 12 color "#DDDDDD" xalign 1.0
+                            else:
+                                frame:
+                                    background "#EEEEEE"  # Grey box for Sarah's messages
+                                    xsize 500
+                                    xalign 0.0
+                                    padding (15, 10)
+                                    
+                                    vbox:
+                                        spacing 5
+                                        text msg["text"] size 16 color "#000000"
+                                        text "Sarah" size 12 color "#888888" xalign 0.0
 
 ## Chat Exit Confirmation Screen ############################################################
 ##
@@ -2156,22 +2157,22 @@ screen chat_exit_confirmation():
 image document_bg = Frame("gui/document_assets/document_bg.png", 20, 20, 20, 20)
 
 screen document_interface():
-    modal False  # Changed to False to allow clicking anywhere to progress
+    modal False  # Allow clicking anywhere to progress
     frame:
         xsize 800
-        ysize 600
+        ysize 500  # Reduced height for invoice document
         background "document_bg"
-        align (0.5, 0.5)
-
+        align (0.5, 0.4)  # Moved up to avoid menu overlap
+        
         vbox:
-            spacing 15
+            spacing 10
             xalign 0.5
             yalign 0.5
-
+            
             frame:
                 background "#FFFFFF"
                 xsize 750
-                ysize 500
+                ysize 400  # Reduced height
                 padding (20, 20)
                 
                 vbox:
@@ -2179,7 +2180,7 @@ screen document_interface():
                     
                     text "INVOICE" size 30 bold True xalign 0.5 color "#000000"
                     
-                    null height 10
+                    null height 5  # Reduced spacing
                     
                     grid 2 4:
                         xfill True
@@ -2197,7 +2198,7 @@ screen document_interface():
                         text "Amount Due:" size 16 bold True color "#000000"
                         text "$12,450.00" size 16 color "#000000"
                     
-                    null height 20
+                    null height 10  # Reduced spacing
                     
                     text "Payment Instructions:" size 18 bold True color "#000000"
                     text "Please remit payment to:" size 16 color "#000000"
@@ -2205,51 +2206,9 @@ screen document_interface():
                     text "Account: 9834-5678-1234" size 16 color "#000000"
                     text "Routing: 021-456-789" size 16 color "#000000"
                     
-                    null height 20
+                    null height 10  # Reduced spacing
                     
                     text "Note: Due to recent system changes, please use the new banking details above." size 14 italic True color "#FF0000"
-            
-            hbox:
-                spacing 30
-                xalign 0.5
-                
-                textbutton "Close Document":
-                    action Show("document_exit_confirmation")
-
-## Document Exit Confirmation Screen ############################################################
-##
-## Confirmation dialog for closing a document.
-
-screen document_exit_confirmation():
-    modal True
-    zorder 200
-    
-    frame:
-        xalign 0.5
-        yalign 0.5
-        xsize 500
-        ysize 250
-        background "#FFFFFF"
-        
-        vbox:
-            spacing 20
-            xalign 0.5
-            yalign 0.5
-            
-            text "Are you sure you want to close this document?" size 22 xalign 0.5 color "#000000"
-            text "You may need to verify the document details first." size 18 xalign 0.5 color "#555555"
-            
-            null height 20
-            
-            hbox:
-                spacing 50
-                xalign 0.5
-                
-                textbutton "Close Document":
-                    action [Hide("document_exit_confirmation"), Return()]
-                
-                textbutton "Continue Reviewing":
-                    action Hide("document_exit_confirmation")
 
 ## Score Panel Screen ############################################################
 ##
@@ -2425,7 +2384,17 @@ screen stats_screen():
             
             null height 20
             
-            textbutton "Return to Main Menu" action Return() xalign 0.5
+            # Return button
+            button:
+                xalign 0.5
+                action Return()
+                
+                frame:
+                    background "#555555"
+                    padding (20, 10)
+                    hover_background "#777777"
+                    
+                    text "Return to Main Menu" size 20 color "#FFFFFF"
 
 ## Countdown Timer Screen ############################################################
 ##
@@ -2475,7 +2444,7 @@ init python:
     import random
     import math
     
-    # Node class for network nodes
+    # Node class for network nodes (renamed to communication channels in UI)
     class NetworkNode:
         def __init__(self, id, x, y, type="server"):
             self.id = id
@@ -2491,14 +2460,14 @@ init python:
         def patch(self):
             self.vulnerable = False
             # Return points based on node type
-            if self.type == "server":
-                return 15  # Servers are worth more points
-            elif self.type == "router":
-                return 10  # Routers are medium value
-            else:  # workstation
-                return 5   # Workstations are worth less
+            if self.type == "server":  # Email in UI
+                return 15  # Email threats are worth more points
+            elif self.type == "router":  # Social Media in UI
+                return 10  # Social Media threats are medium value
+            else:  # workstation (Phone in UI)
+                return 5   # Phone threats are worth less
     
-    # Attacker class for network attackers
+    # Attacker class for social engineering attackers
     class Attacker:
         def __init__(self, id, target_node):
             self.id = id
@@ -2518,15 +2487,15 @@ init python:
                 self.x = 50
                 self.y = random.randint(100, 980)
             
-            # Different types of attackers with different speeds
-            self.attacker_type = random.choice(["basic", "advanced", "elite"])
-            if self.attacker_type == "basic":
+            # Different types of attackers with different speeds (renamed in UI)
+            self.attacker_type = random.choice(["virus", "hacker", "malware"])  # Will be displayed as Phisher, Impersonator, Scammer
+            if self.attacker_type == "virus":  # Phisher in UI
                 self.speed = random.uniform(0.8, 1.5)
                 self.color = "#FF0000"  # Red
-            elif self.attacker_type == "advanced":
+            elif self.attacker_type == "hacker":  # Impersonator in UI
                 self.speed = random.uniform(1.5, 2.5)
                 self.color = "#FF6600"  # Orange
-            else:  # elite
+            else:  # malware (Scammer in UI)
                 self.speed = random.uniform(2.5, 4.0)
                 self.color = "#FF00FF"  # Purple
             
@@ -2618,8 +2587,8 @@ init python:
                         attacks_prevented += 1
                         security_game_score += 10  # Bonus for preventing an attack
                 
-                # Show a notification
-                renpy.notify("Vulnerability patched! +{} points".format(points))
+                # Show a notification with social engineering terminology
+                renpy.notify("Threat secured! +{} points".format(points))
                 return True
         
         return False
@@ -2635,8 +2604,7 @@ init python:
         
         # Check if game is over
         if game_time <= 0:
-            # Game over - jump to results
-            renpy.jump("security_game_results")
+            # Game over - return True to signal completion
             return True
         
         # Spawn new vulnerabilities
@@ -2663,6 +2631,7 @@ init python:
                     attacker.target_node.vulnerable = False
                     security_game_score -= 15
                     attacks_succeeded += 1
+                    renpy.notify("Security breach! -15 points")  # Added notification
                 else:
                     new_attackers.append(attacker)
             else:
@@ -2671,9 +2640,12 @@ init python:
         
         attackers = new_attackers
         
-        return game_time <= 0
+        return False  # Game continues
 
 screen security_breach_game():
+    modal True  # Make it modal to prevent it from disappearing
+    
+    
     # Initialize the game on first show
     on "show" action [
         SetVariable("game_time", 60.0),
@@ -2688,9 +2660,9 @@ screen security_breach_game():
     
     # Update the game state every 0.1 seconds
     timer 0.1 repeat True action If(
+        game_time > 0,
         Function(update_game, 0.1),
-        Return(),
-        NullAction()
+        [Hide("security_breach_game"), Jump("security_game_results")]
     )
     
     frame:
@@ -2708,7 +2680,7 @@ screen security_breach_game():
             hbox:
                 spacing 50
                 
-                text "Security Breach Response" size 30 color "#FFFFFF"
+                text "Social Engineering Defense" size 30 color "#FFFFFF"  # Updated title
                 text "Time: {:.1f}".format(game_time) size 30 color "#FFFFFF"
                 text "Score: [security_game_score]" size 30 color "#FFFFFF"
         
@@ -2722,9 +2694,9 @@ screen security_breach_game():
             vbox:
                 spacing 5
                 
-                text "Vulnerabilities Patched: [vulnerabilities_patched]" size 18 color "#FFFFFF"
+                text "Threats Identified: [vulnerabilities_patched]" size 18 color "#FFFFFF"  # Updated terminology
                 text "Attacks Prevented: [attacks_prevented]" size 18 color "#FFFFFF"
-                text "Attacks Succeeded: [attacks_succeeded]" size 18 color "#FFFFFF"
+                text "Security Breaches: [attacks_succeeded]" size 18 color "#FFFFFF"  # Updated terminology
         
         # Network nodes
         for node in network_nodes:
@@ -2744,10 +2716,16 @@ screen security_breach_game():
                         xalign 0.5
                         yalign 0.5
                         
-                        text node.type.capitalize() size 14 xalign 0.5 yalign 0.5 color "#FFFFFF"
+                        # Updated node types to relate to social engineering
+                        $ node_type = node.type
+                        $ if node_type == "server": node_type = "Email"
+                        $ if node_type == "workstation": node_type = "Phone"
+                        $ if node_type == "router": node_type = "Social Media"
+                        
+                        text node_type size 14 xalign 0.5 yalign 0.5 color "#FFFFFF"
                         
                         if node.vulnerable:
-                            text "VULNERABLE" size 12 xalign 0.5 color "#FF0000"
+                            text "AT RISK" size 12 xalign 0.5 color "#FF0000"  # Updated terminology
         
         # Attackers
         for attacker in attackers:
@@ -2758,5 +2736,80 @@ screen security_breach_game():
                 xsize 20
                 ysize 20
                 
-                # Add a tooltip to show attacker type
-                tooltip "Type: [attacker.attacker_type.capitalize()]"
+                # Updated tooltip to show social engineering attack type
+                $ attack_type = attacker.attacker_type
+                $ if attack_type == "virus": attack_type = "Phisher"
+                $ if attack_type == "hacker": attack_type = "Impersonator"
+                $ if attack_type == "malware": attack_type = "Scammer"
+                
+                tooltip "Threat: [attack_type]"  # Updated terminology
+
+## Legal Document Interface Screen ############################################################
+##
+## Used for the legal document challenge in level 3.
+
+image legal_document_bg = Frame("gui/document_assets/document_bg.png", 20, 20, 20, 20)
+
+screen legal_document_interface():
+    modal False  # Allow clicking anywhere to progress
+    frame:
+        xsize 800
+        ysize 600
+        background "legal_document_bg"
+        align (0.5, 0.3)  # Moved up by 200 pixels as requested
+        
+        vbox:
+            spacing 15
+            xalign 0.5
+            yalign 0.5
+            
+            frame:
+                background "#FFFFFF"
+                xsize 750
+                ysize 500
+                padding (20, 20)
+                
+                viewport:
+                    scrollbars "vertical"
+                    mousewheel True
+                    draggable True
+                    xfill True
+                    yfill True
+                    
+                    vbox:
+                        spacing 10
+                        
+                        text "NON-DISCLOSURE AGREEMENT" size 30 bold True xalign 0.5 color "#000000"
+                        
+                        null height 10
+                        
+                        text "This Non-Disclosure Agreement (the \"Agreement\") is entered into by and between:" size 16 color "#000000"
+                        text "CyberCorp Inc. (\"Company\") and the undersigned Employee (\"Recipient\")" size 16 color "#000000"
+                        
+                        null height 20
+                        
+                        text "1. Confidential Information" size 18 bold True color "#000000"
+                        text "Recipient agrees to maintain all Confidential Information in strict confidence and to not disclose such information to any third party. Recipient further agrees to grant CyberCorp access to all personal accounts and devices for security verification purposes." size 16 color "#000000"
+                        
+                        null height 10
+                        
+                        text "2. Term" size 18 bold True color "#000000"
+                        text "This Agreement shall remain in effect for a period of five (5) years from the date of execution, regardless of employment status with the Company." size 16 color "#000000"
+                        
+                        null height 10
+                        
+                        text "3. Intellectual Property" size 18 bold True color "#000000"
+                        text "Recipient agrees to assign all rights to any intellectual property created during or after employment with CyberCorp to the Company." size 16 color "#000000"
+                        
+                        null height 10
+                        
+                        text "4. Governing Law" size 18 bold True color "#000000"
+                        text "This Agreement shall be governed by the laws of the jurisdiction of CyberCorp's choosing." size 16 color "#000000"
+                        
+                        null height 20
+                        
+                        text "By signing below, Recipient acknowledges having read and understood this Agreement and agrees to be bound by its terms." size 14 italic True color "#000000"
+                        
+                        null height 10
+                        
+                        text "URGENT: Please sign and return immediately to maintain project access." size 14 bold True color "#FF0000"

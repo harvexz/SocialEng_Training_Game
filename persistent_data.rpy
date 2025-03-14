@@ -10,9 +10,32 @@ init python:
             "level_status": "",
             "replay_status": "",
             "levels_played": 0,
-            "tutorial_seen": False
+            "tutorial_seen": False,
+            "temp_level": None  # Used to store the original level when playing a previous level
         }
     
+    # Initialize achievements if not already present
+    if not hasattr(persistent, "achievements") or persistent.achievements is None:
+        persistent.achievements = {
+            "quick_thinker": False,  # For making fast decisions
+            "vigilant_observer": False,  # For correctly identifying multiple phishing attempts
+            "security_expert": False,  # For completing all levels
+            "perfect_score": False,  # For getting a perfect score on any level
+            "level_three_master": False,  # For getting Expert rank in level 3
+            "security_responder": False  # For scoring high in the Security Breach Response game
+        }
+    
+    # Initialize rank data if not already present
+    if not hasattr(persistent, "rank_data") or persistent.rank_data is None:
+        persistent.rank_data = {
+            "current_rank": "Novice",  # Novice, Intermediate, Expert, Elite
+            "rank_thresholds": {
+                "Novice": 0,
+                "Intermediate": 50,
+                "Expert": 100,
+                "Elite": 200
+            }
+        }
 
     if not hasattr(persistent, "emails") or persistent.emails is None:
         persistent.all_emails_correct = False
@@ -36,7 +59,7 @@ init python:
             {
                 "from": "John.Doe@cybercorp.com",
                 "subject": "Project Updates",
-                "body": "Hey,\n\nI’ve compiled the latest updates on the project, including changes to the timeline and deliverables. Please review the attached document and let me know your thoughts before our next team meeting.\n\nThanks,\nJohn",
+                "body": "Hey,\n\nI've compiled the latest updates on the project, including changes to the timeline and deliverables. Please review the attached document and let me know your thoughts before our next team meeting.\n\nThanks,\nJohn",
                 "is_phishing": False,
                 "difficulty_level": 1,
                 "is_external": False
@@ -52,7 +75,7 @@ init python:
             {
                 "from": "Marketing <newsletter@trustedsource.com>",
                 "subject": "Company News - January Edition",
-                "body": "Hello Team,\n\nWe're excited to share the January edition of the CyberCorp newsletter! Inside, you’ll find highlights of recent company initiatives, employee achievements, and upcoming events. Stay informed and connected with your colleagues across departments.\n\nBest,\nThe Marketing Team",
+                "body": "Hello Team,\n\nWe're excited to share the January edition of the CyberCorp newsletter! Inside, you'll find highlights of recent company initiatives, employee achievements, and upcoming events. Stay informed and connected with your colleagues across departments.\n\nBest,\nThe Marketing Team",
                 "is_phishing": False,
                 "difficulty_level": 1,
                 "is_external": True
@@ -60,7 +83,7 @@ init python:
             {
                 "from": "Security Alert <alerts@cybercorp-security.com>",
                 "subject": "Unusual Login Attempt Detected",
-                "body": "Dear Employee,\n\nWe’ve identified an unusual login attempt to your CyberCorp account from an unfamiliar device located in a different region. For your security, we recommend verifying your account activity immediately by clicking the link below:\n\n[cybercorp-security.com/verify]\n\nIf this was not you, please secure your account promptly to prevent unauthorized access.\n\nRegards,\nCyberCorp Security Team",
+                "body": "Dear Employee,\n\nWe've identified an unusual login attempt to your CyberCorp account from an unfamiliar device located in a different region. For your security, we recommend verifying your account activity immediately by clicking the link below:\n\n[cybercorp-security.com/verify]\n\nIf this was not you, please secure your account promptly to prevent unauthorized access.\n\nRegards,\nCyberCorp Security Team",
                 "is_phishing": True,
                 "difficulty_level": 4,
                 "is_external": False
@@ -68,7 +91,7 @@ init python:
             {
                 "from": "CEO <michael.smith@cybercorp.com>",
                 "subject": "Quick Request - Urgent",
-                "body": "Hi,\n\nI’m currently in a meeting and need you to process an urgent wire transfer for a new vendor. Please don’t delay, as it’s time-sensitive. Here are the payment details:\n\n[Vendor Payment Information]\n\nLet me know once it’s done.\n\nThanks,\nMichael",
+                "body": "Hi,\n\nI'm currently in a meeting and need you to process an urgent wire transfer for a new vendor. Please don't delay, as it's time-sensitive. Here are the payment details:\n\n[Vendor Payment Information]\n\nLet me know once it's done.\n\nThanks,\nMichael",
                 "is_phishing": True,
                 "difficulty_level": 5,
                 "is_external": False
@@ -84,7 +107,7 @@ init python:
             {
                 "from": "Admin <admin@cybercorp-secure.com>",
                 "subject": "Important Security Patch Required",
-                "body": "Dear User,\n\nA critical security vulnerability has been identified in our system. To protect your data, it’s imperative that you install the latest security patch immediately:\n\n[cybercorp-secure.com/update]\n\nFailure to apply this patch could result in compromised account security. Contact the IT Help Desk if you need assistance.\n\nRegards,\nIT Admin",
+                "body": "Dear User,\n\nA critical security vulnerability has been identified in our system. To protect your data, it's imperative that you install the latest security patch immediately:\n\n[cybercorp-secure.com/update]\n\nFailure to apply this patch could result in compromised account security. Contact the IT Help Desk if you need assistance.\n\nRegards,\nIT Admin",
                 "is_phishing": True,
                 "difficulty_level": 3,
                 "is_external": False
@@ -110,8 +133,41 @@ init python:
 
     def save_progress():
         """Saves game progress automatically."""
+        # Update rank based on score
+        update_rank()
+        # Check for achievements
+        check_achievements()
         renpy.save_persistent()  # Save changes
         log_data() # Exports to csv
+    
+
+    def update_rank():
+        """Updates the player's rank based on their score."""
+        score = persistent.game_progress["score"]
+        
+        if score >= persistent.rank_data["rank_thresholds"]["Elite"]:
+            persistent.rank_data["current_rank"] = "Elite"
+        elif score >= persistent.rank_data["rank_thresholds"]["Expert"]:
+            persistent.rank_data["current_rank"] = "Expert"
+        elif score >= persistent.rank_data["rank_thresholds"]["Intermediate"]:
+            persistent.rank_data["current_rank"] = "Intermediate"
+        else:
+            persistent.rank_data["current_rank"] = "Novice"
+    
+
+    def check_achievements():
+        """Checks and updates achievements based on game progress."""
+        # Check for security expert achievement
+        if len(persistent.game_progress["completed_levels"]) >= 3:
+            if not persistent.achievements["security_expert"]:
+                persistent.achievements["security_expert"] = True
+                renpy.notify("Achievement Unlocked: Security Expert!")
+        
+        # Check for level three master achievement
+        if "third_level" in persistent.game_progress["completed_levels"] and persistent.rank_data["current_rank"] == "Expert":
+            if not persistent.achievements["level_three_master"]:
+                persistent.achievements["level_three_master"] = True
+                renpy.notify("Achievement Unlocked: Level Three Master!")
     
 
     def log_data():
@@ -125,7 +181,8 @@ init python:
                 persistent.game_progress["current_level"],
                 persistent.game_progress["score"],
                 persistent.game_progress["level_status"],
-                persistent.game_progress["replay_status"]
+                persistent.game_progress["replay_status"],
+                persistent.rank_data["current_rank"]  # Added rank to the logged data
             ])
     
 
@@ -150,6 +207,12 @@ init python:
             else:
                 renpy.notify("Correct! No points scored for reapeated answers.")
             email["answered_correctly"] = True
+            
+            # Check for vigilant observer achievement
+            correct_count = sum(1 for e in persistent.emails if e.get("answered_correctly", False))
+            if correct_count >= 5 and not persistent.achievements["vigilant_observer"]:
+                persistent.achievements["vigilant_observer"] = True
+                renpy.notify("Achievement Unlocked: Vigilant Observer!")
         else:
             penalty = max_difficulty - difficulty
             renpy.notify("Incorrect. This email was " + ("safe." if not email["is_phishing"] else "a phishing attempt!") + " {} points lost".format(penalty))
@@ -170,4 +233,33 @@ init python:
             renpy.notify("All emails have been correctly identified. Level complete!")
             # call the level_complete label
             persistent.all_emails_correct = all_correct
+            
+            # Check for perfect score achievement
+            if all(e.get("scored", False) for e in persistent.emails) and not persistent.achievements["perfect_score"]:
+                persistent.achievements["perfect_score"] = True
+                renpy.notify("Achievement Unlocked: Perfect Score!")
+                
             renpy.call_in_new_context("level_complete")
+            
+    
+    def award_quick_thinker():
+        """Awards the Quick Thinker achievement for making fast decisions."""
+        if not persistent.achievements["quick_thinker"]:
+            persistent.achievements["quick_thinker"] = True
+            renpy.notify("Achievement Unlocked: Quick Thinker!")
+            save_progress()
+
+    def reset_email_status():
+        """Resets the status of all emails when replaying Level 2."""
+        if hasattr(persistent, "emails") and persistent.emails:
+            for email in persistent.emails:
+                if "read" in email:
+                    del email["read"]
+                if "answered_correctly" in email:
+                    del email["answered_correctly"]
+                if "scored" in email:
+                    del email["scored"]
+            
+            # Reset the all_emails_correct flag
+            persistent.all_emails_correct = False
+            renpy.notify("Email status has been reset for replay")

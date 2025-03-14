@@ -1,3 +1,11 @@
 saves/
 gui/main_menu2.png
 photoshop/
+.DS_Store
+script.rpyc
+screens.rpyc
+persostent_data.rpyc
+gui.rpyc
+cache/
+.vscode/
+
