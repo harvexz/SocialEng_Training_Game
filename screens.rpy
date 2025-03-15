@@ -723,12 +723,6 @@ style page_button:
 style page_button_text:
     properties gui.text_properties("page_button")
 
-style slot_button:
-    properties gui.button_properties("slot_button")
-
-style slot_button_text:
-    properties gui.text_properties("slot_button")
-
 
 ## Preferences screen ##########################################################
 ##
@@ -1658,6 +1652,8 @@ screen level_select():
                 return "Level 2: Check your mail!"
             elif level_id == "third_level":
                 return "Level 3: Insider Threat"
+            elif level_id == "fourth_level":
+                return "Level 4: Physical Security - Tailgating"
             else:
                 return level_id
     
@@ -1671,8 +1667,9 @@ screen level_select():
         background "#00000088"
         padding (30, 30)
         
-    vbox:
+        vbox:
             spacing 20
+            xfill True
             
             text "Play Previous Levels" size 40 xalign 0.5 color "#FFFFFF"
             
@@ -1706,6 +1703,7 @@ screen level_select():
                     mousewheel True
                     draggable True
                     yinitial 0.0
+                    xfill True
                     
                     vbox:
                         spacing 15
@@ -1723,6 +1721,7 @@ screen level_select():
                             
                             hbox:
                                 spacing 20
+                                xfill True
                                 
                                 vbox:
                                     xsize 600
@@ -1752,6 +1751,7 @@ screen level_select():
                             
                             hbox:
                                 spacing 20
+                                xfill True
                                 
                                 vbox:
                                     xsize 600
@@ -1782,6 +1782,7 @@ screen level_select():
                                 
                                 hbox:
                                     spacing 20
+                                    xfill True
                                     
                                     vbox:
                                         xsize 600
@@ -1813,6 +1814,7 @@ screen level_select():
                                 
                                 hbox:
                                     spacing 20
+                                    xfill True
                                     
                                     vbox:
                                         xsize 600
@@ -1826,6 +1828,37 @@ screen level_select():
                                         yalign 0.5
                                         action [SetVariable("persistent.game_progress['temp_level']", persistent.game_progress["current_level"]), 
                                                 Start("third_level")]
+                                        
+                                        frame:
+                                            background "#0099cc"
+                                            padding (15, 10)
+                                            hover_background "#66c1e0"
+                                            
+                                            text "Play" size 18 color "#FFFFFF"
+                        
+                        # Level 4 is available if Level 3 is completed
+                        if "third_level" in persistent.game_progress["completed_levels"]:
+                            frame:
+                                background "#333333"
+                                padding (15, 15)
+                                xfill True
+                                
+                                hbox:
+                                    spacing 20
+                                    xfill True
+                                    
+                                    vbox:
+                                        xsize 600
+                                        spacing 5
+                                        
+                                        text "Level 4: Physical Security - Tailgating" size 22 color "#FFFFFF" bold True
+                                        text "Learn to identify and respond to physical security threats like tailgating" size 16 color "#CCCCCC"
+                                    
+                                    button:
+                                        xalign 1.0
+                                        yalign 0.5
+                                        action [SetVariable("persistent.game_progress['temp_level']", persistent.game_progress["current_level"]), 
+                                                Start("fourth_level")]
                                         
                                         frame:
                                             background "#0099cc"
@@ -2379,8 +2412,14 @@ screen stats_screen():
                                         text "Perfect Score - Get a perfect score on any level" size 16 color "#FFFFFF"
                                     elif name == "level_three_master":
                                         text "Level Three Master - Achieve Expert rank in Level 3" size 16 color "#FFFFFF"
+                                    elif name == "physical_security_expert":
+                                        text "Physical Security Expert - Successfully identify and report a tailgating attempt" size 16 color "#FFFFFF"
+                                    elif name == "detail_oriented":
+                                        text "Detail Oriented - Accurately remember details about an intruder" size 16 color "#FFFFFF"
                                     elif name == "security_responder":
-                                        text "Security Responder - Excel at the Security Breach Response game" size 16 color "#FFFFFF"
+                                        text "Security Responder - Excel at the Level 4 Security Defense Game" size 16 color "#FFFFFF"
+                                    elif name == "defense_master":
+                                        text "Defense Master - Prevent all attacks in the Level 4 Security Defense Game" size 16 color "#FFFFFF"
             
             null height 20
             
@@ -2435,314 +2474,6 @@ screen countdown_timer(duration):
             
             if timer_value <= 5.0:
                 text "Hurry!" color "#FF0000" size 16 xalign 0.5
-
-## Security Breach Game Screen ############################################################
-##
-## Used for the Security Breach Response mini-game in level 3.
-
-init python:
-    import random
-    import math
-    
-    # Node class for network nodes (renamed to communication channels in UI)
-    class NetworkNode:
-        def __init__(self, id, x, y, type="server"):
-            self.id = id
-            self.x = x
-            self.y = y
-            self.type = type
-            self.vulnerable = False
-            self.under_attack = False
-        
-        def make_vulnerable(self):
-            self.vulnerable = True
-        
-        def patch(self):
-            self.vulnerable = False
-            # Return points based on node type
-            if self.type == "server":  # Email in UI
-                return 15  # Email threats are worth more points
-            elif self.type == "router":  # Social Media in UI
-                return 10  # Social Media threats are medium value
-            else:  # workstation (Phone in UI)
-                return 5   # Phone threats are worth less
-    
-    # Attacker class for social engineering attackers
-    class Attacker:
-        def __init__(self, id, target_node):
-            self.id = id
-            self.target_node = target_node
-            # Start at a random edge of the screen
-            edge = random.randint(0, 3)  # 0: top, 1: right, 2: bottom, 3: left
-            if edge == 0:
-                self.x = random.randint(100, 1820)
-                self.y = 50
-            elif edge == 1:
-                self.x = 1870
-                self.y = random.randint(100, 980)
-            elif edge == 2:
-                self.x = random.randint(100, 1820)
-                self.y = 1030
-            else:
-                self.x = 50
-                self.y = random.randint(100, 980)
-            
-            # Different types of attackers with different speeds (renamed in UI)
-            self.attacker_type = random.choice(["virus", "hacker", "malware"])  # Will be displayed as Phisher, Impersonator, Scammer
-            if self.attacker_type == "virus":  # Phisher in UI
-                self.speed = random.uniform(0.8, 1.5)
-                self.color = "#FF0000"  # Red
-            elif self.attacker_type == "hacker":  # Impersonator in UI
-                self.speed = random.uniform(1.5, 2.5)
-                self.color = "#FF6600"  # Orange
-            else:  # malware (Scammer in UI)
-                self.speed = random.uniform(2.5, 4.0)
-                self.color = "#FF00FF"  # Purple
-            
-            self.reached_target = False
-        
-        def move(self):
-            if not self.reached_target:
-                # Calculate direction to target
-                dx = self.target_node.x - self.x
-                dy = self.target_node.y - self.y
-                distance = math.sqrt(dx*dx + dy*dy)
-                
-                if distance < 10:
-                    self.reached_target = True
-                    return True
-                
-                # Normalize and apply speed
-                dx = dx / distance * self.speed
-                dy = dy / distance * self.speed
-                
-                self.x += dx
-                self.y += dy
-            
-            return False
-    
-    # Game state variables
-    network_nodes = []
-    attackers = []
-    game_time = 60.0
-    spawn_timer = 0.0
-    attacker_timer = 0.0
-    security_game_score = 0
-    vulnerabilities_patched = 0
-    attacks_prevented = 0
-    attacks_succeeded = 0
-    
-    # Initialize the network
-    def init_network():
-        global network_nodes
-        network_nodes = []
-        
-        # Create a grid of nodes
-        for i in range(5):
-            for j in range(4):
-                x = 300 + i * 300
-                y = 200 + j * 200
-                node_type = random.choice(["server", "workstation", "router"])
-                network_nodes.append(NetworkNode(len(network_nodes), x, y, node_type))
-    
-    # Spawn a new vulnerability
-    def spawn_vulnerability():
-        global network_nodes
-        
-        # Find nodes that aren't already vulnerable
-        available_nodes = [node for node in network_nodes if not node.vulnerable]
-        
-        if available_nodes:
-            node = random.choice(available_nodes)
-            node.make_vulnerable()
-    
-    # Spawn a new attacker
-    def spawn_attacker():
-        global network_nodes, attackers
-        
-        # Find vulnerable nodes
-        vulnerable_nodes = [node for node in network_nodes if node.vulnerable]
-        
-        if vulnerable_nodes:
-            target_node = random.choice(vulnerable_nodes)
-            attackers.append(Attacker(len(attackers), target_node))
-            return True
-        
-        return False
-    
-    # Patch a vulnerability
-    def patch_vulnerability(node_id):
-        global network_nodes, security_game_score, vulnerabilities_patched, attacks_prevented
-        
-        for node in network_nodes:
-            if node.id == node_id and node.vulnerable:
-                points = node.patch()
-                security_game_score += points
-                vulnerabilities_patched += 1
-                
-                # Check if any attackers were targeting this node and count as prevented
-                for attacker in list(attackers):
-                    if attacker.target_node.id == node_id:
-                        attackers.remove(attacker)
-                        attacks_prevented += 1
-                        security_game_score += 10  # Bonus for preventing an attack
-                
-                # Show a notification with social engineering terminology
-                renpy.notify("Threat secured! +{} points".format(points))
-                return True
-        
-        return False
-    
-    # Update game state
-    def update_game(dt):
-        global game_time, spawn_timer, attacker_timer, attackers, security_game_score, attacks_prevented, attacks_succeeded
-        
-        # Update timers
-        game_time -= dt
-        spawn_timer -= dt
-        attacker_timer -= dt
-        
-        # Check if game is over
-        if game_time <= 0:
-            # Game over - return True to signal completion
-            return True
-        
-        # Spawn new vulnerabilities
-        if spawn_timer <= 0:
-            spawn_vulnerability()
-            spawn_timer = random.uniform(2.0, 5.0)
-        
-        # Spawn new attackers
-        if attacker_timer <= 0:
-            # Only try to spawn attackers if there are vulnerable nodes
-            if any(node.vulnerable for node in network_nodes):
-                if spawn_attacker():
-                    attacker_timer = random.uniform(3.0, 7.0)
-            else:
-                attacker_timer = 1.0  # Check again soon
-        
-        # Update attackers
-        new_attackers = []
-        for attacker in attackers:
-            if attacker.target_node.vulnerable:
-                # If the target is still vulnerable, move toward it
-                if attacker.move():
-                    # Attacker reached the target
-                    attacker.target_node.vulnerable = False
-                    security_game_score -= 15
-                    attacks_succeeded += 1
-                    renpy.notify("Security breach! -15 points")  # Added notification
-                else:
-                    new_attackers.append(attacker)
-            else:
-                # Target was patched, count as prevented
-                attacks_prevented += 1
-        
-        attackers = new_attackers
-        
-        return False  # Game continues
-
-screen security_breach_game():
-    modal True  # Make it modal to prevent it from disappearing
-    
-    
-    # Initialize the game on first show
-    on "show" action [
-        SetVariable("game_time", 60.0),
-        SetVariable("spawn_timer", 2.0),
-        SetVariable("attacker_timer", 3.0),
-        SetVariable("security_game_score", 0),
-        SetVariable("vulnerabilities_patched", 0),
-        SetVariable("attacks_prevented", 0),
-        SetVariable("attacks_succeeded", 0),
-        Function(init_network)
-    ]
-    
-    # Update the game state every 0.1 seconds
-    timer 0.1 repeat True action If(
-        game_time > 0,
-        Function(update_game, 0.1),
-        [Hide("security_breach_game"), Jump("security_game_results")]
-    )
-    
-    frame:
-        background "#000000"
-        xfill True
-        yfill True
-        
-        # Game title and timer
-        frame:
-            background "#333333"
-            xalign 0.5
-            ypos 20
-            padding (20, 10)
-            
-            hbox:
-                spacing 50
-                
-                text "Social Engineering Defense" size 30 color "#FFFFFF"  # Updated title
-                text "Time: {:.1f}".format(game_time) size 30 color "#FFFFFF"
-                text "Score: [security_game_score]" size 30 color "#FFFFFF"
-        
-        # Game stats
-        frame:
-            background "#333333"
-            xalign 0.95
-            yalign 0.95
-            padding (15, 10)
-            
-            vbox:
-                spacing 5
-                
-                text "Threats Identified: [vulnerabilities_patched]" size 18 color "#FFFFFF"  # Updated terminology
-                text "Attacks Prevented: [attacks_prevented]" size 18 color "#FFFFFF"
-                text "Security Breaches: [attacks_succeeded]" size 18 color "#FFFFFF"  # Updated terminology
-        
-        # Network nodes
-        for node in network_nodes:
-            frame:
-                background ("#444444" if not node.vulnerable else "#FFCC00")
-                xpos node.x - 40
-                ypos node.y - 40
-                xsize 80
-                ysize 80
-                
-                button:
-                    action Function(patch_vulnerability, node.id)
-                    xfill True
-                    yfill True
-                    
-                    vbox:
-                        xalign 0.5
-                        yalign 0.5
-                        
-                        # Updated node types to relate to social engineering
-                        $ node_type = node.type
-                        $ if node_type == "server": node_type = "Email"
-                        $ if node_type == "workstation": node_type = "Phone"
-                        $ if node_type == "router": node_type = "Social Media"
-                        
-                        text node_type size 14 xalign 0.5 yalign 0.5 color "#FFFFFF"
-                        
-                        if node.vulnerable:
-                            text "AT RISK" size 12 xalign 0.5 color "#FF0000"  # Updated terminology
-        
-        # Attackers
-        for attacker in attackers:
-            frame:
-                background attacker.color
-                xpos attacker.x - 10
-                ypos attacker.y - 10
-                xsize 20
-                ysize 20
-                
-                # Updated tooltip to show social engineering attack type
-                $ attack_type = attacker.attacker_type
-                $ if attack_type == "virus": attack_type = "Phisher"
-                $ if attack_type == "hacker": attack_type = "Impersonator"
-                $ if attack_type == "malware": attack_type = "Scammer"
-                
-                tooltip "Threat: [attack_type]"  # Updated terminology
 
 ## Legal Document Interface Screen ############################################################
 ##
@@ -2813,3 +2544,101 @@ screen legal_document_interface():
                         null height 10
                         
                         text "URGENT: Please sign and return immediately to maintain project access." size 14 bold True color "#FF0000"
+
+## Email Compose Screen ############################################################
+##
+## Used for composing emails in Level 4.
+
+screen email_compose():
+    modal False
+    frame:
+        xsize 800
+        ysize 500
+        background "gui/document_assets/document_bg.png"
+        align (0.5, 0.5)
+        
+        vbox:
+            spacing 15
+            xalign 0.5
+            yalign 0.5
+            xfill True
+            
+            frame:
+                background "#FFFFFF"
+                xsize 750
+                ysize 450
+                padding (20, 20)
+                
+                vbox:
+                    spacing 10
+                    xfill True
+                    
+                    frame:
+                        background "#F0F0F0"
+                        padding (10, 10)
+                        xfill True
+                        
+                        vbox:
+                            spacing 5
+                            xfill True
+                            
+                            hbox:
+                                spacing 10
+                                text "To:" size 16 color "#000000" bold True
+                                text "security@cybercorp.com" size 16 color "#000000"
+                            
+                            hbox:
+                                spacing 10
+                                text "From:" size 16 color "#000000" bold True
+                                text "you@cybercorp.com" size 16 color "#000000"
+                            
+                            hbox:
+                                spacing 10
+                                text "Subject:" size 16 color "#000000" bold True
+                                if "email_content" in globals() and email_content.startswith("Subject:"):
+                                    $ subject = email_content.split("\n")[0].replace("Subject: ", "")
+                                    text "[subject]" size 16 color "#000000"
+                                else:
+                                    text "Potential Security Concern" size 16 color "#000000"
+                    
+                    null height 10
+                    
+                    frame:
+                        background "#FFFFFF"
+                        xfill True
+                        yfill True
+                        padding (10, 10)
+                        
+                        viewport:
+                            scrollbars "vertical"
+                            mousewheel True
+                            draggable True
+                            xfill True
+                            yfill True
+                            
+                            vbox:
+                                spacing 10
+                                xfill True
+                                
+                                if "email_content" in globals():
+                                    $ body = "\n".join(email_content.split("\n")[1:]) if "\n" in email_content else email_content
+                                    text "[body]" size 16 color "#000000"
+                                else:
+                                    text "Email content will appear here." size 16 color "#000000"
+
+## ID Card Screen ############################################################
+##
+## Used for displaying ID cards in Level 4.
+
+image id_card = Composite(
+    (400, 200),
+    (0, 0), "gui/document_assets/document_bg.png",
+    (20, 20), Text("CYBERCORP", size=24, color="#000000", bold=True),
+    (20, 60), Text("EMPLOYEE IDENTIFICATION", size=16, color="#000000"),
+    (20, 100), Text("Name: Alice Johnson", size=14, color="#000000"),
+    (20, 120), Text("ID: 78291", size=14, color="#000000"),
+    (20, 140), Text("Department: IT Security", size=14, color="#000000"),
+    (20, 160), Text("Access Level: B", size=14, color="#000000"),
+    (20, 180), Text("Issue Date: 01/15/2025", size=14, color="#000000"),
+    (250, 50), "gui/document_assets/id_photo.png"
+)

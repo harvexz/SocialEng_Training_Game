@@ -121,7 +121,9 @@ label level_complete:
         elif persistent.game_progress["current_level"] == "second_level":
             $ persistent.game_progress["current_level"] = "third_level"
         elif persistent.game_progress["current_level"] == "third_level":
-            $ persistent.game_progress["current_level"] = "third_level"
+            $ persistent.game_progress["current_level"] = "fourth_level"
+        elif persistent.game_progress["current_level"] == "fourth_level":
+            $ persistent.game_progress["current_level"] = "fourth_level"
     
     return
 
@@ -282,8 +284,6 @@ label call_supervisor:
 
     jump level_complete
 
-    return
-
 
 label insist_policy:
 
@@ -313,7 +313,7 @@ label second_level:
     show screen top_bar
     show player happy
     "Work work work... It never seems to stop."
-    "Your manager has asked you to check your email inbox for potential phishing emails."
+    "Your Boss has asked you to check your email inbox for potential phishing emails."
     "Carefully examine each email and report any suspicious activity."
     "Take your time, and check out the first email for some tips on what to look for!"
 
@@ -443,7 +443,7 @@ label phone_call_verify:
             $ response_time = renpy.time.time() - start_time
             $ timer_score(response_time, "phone_score")
             jump phone_call_success
-        "Can you tell me who your manager is?":
+        "Can you tell me who your Boss is?":
             $ response_time = renpy.time.time() - start_time
             $ timer_score(response_time, "phone_score")
             jump phone_call_manager
@@ -645,16 +645,16 @@ label chat_verify_person:
             
         "I can check the company directory for you, but may I ask which department you're with?":
             $ _chat_history.append({"sender": "you", "text": "I can check the company directory for you, but may I ask which department you're with?"})
-            $ chat_score += 5
-            $ renpy.notify("+5 points for verifying identity")
+            $ chat_score += 1
+            $ renpy.notify("+1 point for verifying identity")
             hide screen chat_interface
             show screen chat_interface
             jump chat_verify_department
             
         "You should be able to find that in the company directory. Is there a reason you're asking me?":
             $ _chat_history.append({"sender": "you", "text": "You should be able to find that in the company directory. Is there a reason you're asking me?"})
-            $ chat_score += 8
-            $ renpy.notify("+8 points for questioning suspicious behavior")
+            $ chat_score += 1
+            $ renpy.notify("+1 point for questioning suspicious behavior")
             hide screen chat_interface
             show screen chat_interface
             jump chat_suspicious
@@ -677,16 +677,16 @@ label chat_verify_department:
             
         "What's your employee ID? I'll need to verify before sharing any contacts.":
             $ _chat_history.append({"sender": "you", "text": "What's your employee ID? I'll need to verify before sharing any contacts."})
-            $ chat_score += 10
-            $ renpy.notify("+10 points for requesting verification")
+            $ chat_score += 1
+            $ renpy.notify("+1 point for requesting verification")
             hide screen chat_interface
             show screen chat_interface
             jump chat_verify_id
             
         "Let me check with my supervisor first before sharing any information.":
             $ _chat_history.append({"sender": "you", "text": "Let me check with my supervisor first before sharing any information."})
-            $ chat_score += 8
-            $ renpy.notify("+8 points for following protocol")
+            $ chat_score += 1
+            $ renpy.notify("+1 point for following protocol")
             hide screen chat_interface
             show screen chat_interface
             jump chat_success
@@ -703,16 +703,16 @@ label chat_verify_id:
             
         "That's strange, the finance department manager is actually Michelle, not John.":
             $ _chat_history.append({"sender": "you", "text": "That's strange, the finance department manager is actually Michelle, not John."})
-            $ chat_score += 10
-            $ renpy.notify("+10 points for catching the lie")
+            $ chat_score += 1
+            $ renpy.notify("+1 point for catching the lie")
             hide screen chat_interface
             show screen chat_interface
             jump chat_success
             
         "Let me check with HR to confirm you're a new hire before I share any information.":
             $ _chat_history.append({"sender": "you", "text": "Let me check with HR to confirm you're a new hire before I share any information."})
-            $ chat_score += 10
-            $ renpy.notify("+10 points for thorough verification")
+            $ chat_score += 1
+            $ renpy.notify("+1 point for thorough verification")
             hide screen chat_interface
             show screen chat_interface
             jump chat_success
@@ -735,16 +735,16 @@ label chat_verify_report:
             
         "Project Falcon? I'm not familiar with that project. Let me check if I have access.":
             $ _chat_history.append({"sender": "you", "text": "Project Falcon? I'm not familiar with that project. Let me check if I have access."})
-            $ chat_score += 5
-            $ renpy.notify("+5 points for caution")
+            $ chat_score += 1
+            $ renpy.notify("+1 point for caution")
             hide screen chat_interface
             show screen chat_interface
             jump chat_verify_project
             
         "Can you tell me who authorized your access to Project Falcon?":
             $ _chat_history.append({"sender": "you", "text": "Can you tell me who authorized your access to Project Falcon?"})
-            $ chat_score += 8
-            $ renpy.notify("+8 points for verifying authorization")
+            $ chat_score += 1
+            $ renpy.notify("+1 point for verifying authorization")
             hide screen chat_interface
             show screen chat_interface
             jump chat_verify_authorization
@@ -767,16 +767,16 @@ label chat_verify_project:
             
         "Let me check with my supervisor first to make sure I'm authorized to share this.":
             $ _chat_history.append({"sender": "you", "text": "Let me check with my supervisor first to make sure I'm authorized to share this."})
-            $ chat_score += 10
-            $ renpy.notify("+10 points for following protocol")
+            $ chat_score += 1
+            $ renpy.notify("+1 point for following protocol")
             hide screen chat_interface
             show screen chat_interface
             jump chat_success
             
         "Can you provide your employee ID for verification?":
             $ _chat_history.append({"sender": "you", "text": "Can you provide your employee ID for verification?"})
-            $ chat_score += 8
-            $ renpy.notify("+8 points for requesting verification")
+            $ chat_score += 1
+            $ renpy.notify("+1 point for requesting verification")
             hide screen chat_interface
             show screen chat_interface
             jump chat_verify_id
@@ -799,16 +799,16 @@ label chat_verify_authorization:
             
         "What's your manager's name? I'll need to verify.":
             $ _chat_history.append({"sender": "you", "text": "What's your manager's name? I'll need to verify."})
-            $ chat_score += 8
-            $ renpy.notify("+8 points for verification")
+            $ chat_score += 1
+            $ renpy.notify("+1 point for verification")
             hide screen chat_interface
             show screen chat_interface
             jump chat_verify_manager
             
         "I'll need to follow proper channels for this request. Let me submit a formal access request.":
             $ _chat_history.append({"sender": "you", "text": "I'll need to follow proper channels for this request. Let me submit a formal access request."})
-            $ chat_score += 10
-            $ renpy.notify("+10 points for following security protocol")
+            $ chat_score += 1
+            $ renpy.notify("+1 point for following security protocol")
             hide screen chat_interface
             show screen chat_interface
             jump chat_success
@@ -831,16 +831,16 @@ label chat_verify_manager:
             
         "That's strange, the finance department manager is actually Michelle, not John.":
             $ _chat_history.append({"sender": "you", "text": "That's strange, the finance department manager is actually Michelle, not John."})
-            $ chat_score += 10
-            $ renpy.notify("+10 points for catching the lie")
+            $ chat_score += 1
+            $ renpy.notify("+1 point for catching the lie")
             hide screen chat_interface
             show screen chat_interface
             jump chat_suspicious
             
         "Let me check with HR to confirm you're a new hire before I share any information.":
             $ _chat_history.append({"sender": "you", "text": "Let me check with HR to confirm you're a new hire before I share any information."})
-            $ chat_score += 10
-            $ renpy.notify("+10 points for thorough verification")
+            $ chat_score += 1
+            $ renpy.notify("+1 point for thorough verification")
             hide screen chat_interface
             show screen chat_interface
             jump chat_success
@@ -863,16 +863,16 @@ label chat_suspicious:
             
         "Go ahead and report it. I'm following security protocols.":
             $ _chat_history.append({"sender": "you", "text": "Go ahead and report it. I'm following security protocols."})
-            $ chat_score += 15
-            $ renpy.notify("+15 points for standing firm on security")
+            $ chat_score += 2
+            $ renpy.notify("+2 point for standing firm on security")
             hide screen chat_interface
             show screen chat_interface
             jump chat_success
             
         "I'll need to escalate this conversation to the security team.":
             $ _chat_history.append({"sender": "you", "text": "I'll need to escalate this conversation to the security team."})
-            $ chat_score += 15
-            $ renpy.notify("+15 points for involving security")
+            $ chat_score += 2
+            $ renpy.notify("+2 point for involving security")
             hide screen chat_interface
             show screen chat_interface
             jump chat_success
@@ -895,16 +895,16 @@ label chat_continue:
             
         "I can only send it to your company email address.":
             $ _chat_history.append({"sender": "you", "text": "I can only send it to your company email address."})
-            $ chat_score += 10
-            $ renpy.notify("+10 points for following email policy")
+            $ chat_score += 1
+            $ renpy.notify("+1 point for following email policy")
             hide screen chat_interface
             show screen chat_interface
             jump chat_verify_email
             
         "Let me check with IT about your email issues first.":
             $ _chat_history.append({"sender": "you", "text": "Let me check with IT about your email issues first."})
-            $ chat_score += 15
-            $ renpy.notify("+15 points for verifying with IT")
+            $ chat_score += 2
+            $ renpy.notify("+2 point for verifying with IT")
             hide screen chat_interface
             show screen chat_interface
             jump chat_success
@@ -927,16 +927,16 @@ label chat_verify_email:
             
         "I'll need to get approval from my manager first.":
             $ _chat_history.append({"sender": "you", "text": "I'll need to get approval from my manager first."})
-            $ chat_score += 10
-            $ renpy.notify("+10 points for seeking approval")
+            $ chat_score += 1
+            $ renpy.notify("+1 point for seeking approval")
             hide screen chat_interface
             show screen chat_interface
             jump chat_success
             
         "Let me help you contact IT to fix your email instead.":
             $ _chat_history.append({"sender": "you", "text": "Let me help you contact IT to fix your email instead."})
-            $ chat_score += 15
-            $ renpy.notify("+15 points for offering proper assistance")
+            $ chat_score += 1
+            $ renpy.notify("+1 point for offering proper assistance")
             hide screen chat_interface
             show screen chat_interface
             jump chat_success
@@ -988,24 +988,25 @@ label document_challenge:
     show screen document_interface
     with dissolve
     
-    # Remove timer as requested in the CodeDevelopmentDocument
-    
     "The document appears to be an invoice from a regular vendor, but something seems off about it."
     
     menu:
         "Check the sender's email address":
             "The email is from 'billing@venndor-invoices.com' instead of the usual 'accounting@vendor.com'"
-            $ document_score += 5
+            $ document_score += 1
+            $ renpy.notify("+1 point")
             jump document_continue
             
         "Review the invoice details":
             "The invoice number format is different from previous ones, and the bank account details don't match your records."
-            $ document_score += 3
+            $ document_score += 1
+            $ renpy.notify("+1 point")
             jump document_continue
             
         "Check both the sender and invoice details":
             "Both the sender's email address and invoice details appear suspicious and don't match previous legitimate communications."
-            $ document_score += 10
+            $ document_score += 1
+            $ renpy.notify("+1 point")
             jump document_continue
 
 label document_continue:
@@ -1015,10 +1016,12 @@ label document_continue:
         "Process the payment as requested":
             jump document_fail
         "Forward to accounting for verification":
-            $ document_score += 5
+            $ document_score += 1
+            $ renpy.notify("+1 point")
             jump document_verify_accounting
         "Contact the vendor directly using your existing contact information":
-            $ document_score += 10
+            $ document_score += 1
+            $ renpy.notify("+1 point")
             jump document_success
     
 label document_verify_accounting:
@@ -1030,10 +1033,12 @@ label document_verify_accounting:
         "Process the payment anyway since it's urgent":
             jump document_fail
         "Inform the sender that we need additional verification":
-            $ document_score += 5
+            $ document_score += 1
+            $ renpy.notify("+1 point")
             jump document_request_verification
         "Report this as a potential fraud attempt":
-            $ document_score += 10
+            $ document_score += 1
+            $ renpy.notify("+1 point")
             jump document_success
     
 label document_request_verification:
@@ -1045,7 +1050,8 @@ label document_request_verification:
         "Process the payment to avoid service interruption":
             jump document_fail
         "Report this as a suspicious communication":
-            $ document_score += 10
+            $ document_score += 1
+            $ renpy.notify("+1 point")
             jump document_success
 
 label document_fail:
@@ -1094,17 +1100,20 @@ label document_challenge_two:
     menu:
         "Check the sender's email address":
             "The email is from 'legal@cyber-corp-team.com' instead of the usual 'legal@cybercorp.com'"
-            $ document_score += 5
+            $ document_score += 1
+            $ renpy.notify("+1 point")
             jump document_two_continue
             
         "Review the document details":
             "The document has several unusual clauses that seem overly broad, and the company name is slightly misspelled in places."
-            $ document_score += 3
+            $ document_score += 1
+            $ renpy.notify("+1 point")
             jump document_two_continue
             
         "Check both the sender and document details":
             "Both the sender's email address and document details appear suspicious. The formatting is inconsistent with official company documents."
-            $ document_score += 10
+            $ document_score += 1
+            $ renpy.notify("+1 point")
             jump document_two_continue
 
 label document_two_continue:
@@ -1114,10 +1123,12 @@ label document_two_continue:
         "Sign the document as requested":
             jump document_two_fail
         "Forward to the legal department for verification":
-            $ document_score += 5
+            $ document_score += 1
+            $ renpy.notify("+1 point")
             jump document_two_verify_legal
         "Contact your supervisor to confirm this request":
-            $ document_score += 10
+            $ document_score += 1
+            $ renpy.notify("+1 point")
             jump document_two_success
     
 label document_two_verify_legal:
@@ -1129,10 +1140,12 @@ label document_two_verify_legal:
         "Sign it anyway since it's marked as urgent":
             jump document_two_fail
         "Thank legal and discard the document":
-            $ document_score += 10
+            $ document_score += 1
+            $ renpy.notify("+1 point")
             jump document_two_success
         "Reply asking for more information about the project":
-            $ document_score += 5
+            $ document_score += 1
+            $ renpy.notify("+1 point")
             jump document_two_request_info
 
 label document_two_request_info:
@@ -1144,7 +1157,8 @@ label document_two_request_info:
         "Sign the document to learn more":
             jump document_two_fail
         "Report this as suspicious activity":
-            $ document_score += 10
+            $ document_score += 1
+            $ renpy.notify("+1 point")
             jump document_two_success
 
 label document_two_fail:
@@ -1195,120 +1209,606 @@ label level_three_complete:
     $ persistent.game_progress["score"] += total_score
     $ save_progress()
     
-    if total_score >= 50:
+    if total_score >= 20:
         "OUTSTANDING PERFORMANCE! You demonstrated excellent security awareness."
-    elif total_score >= 30:
+    elif total_score >= 10:
         "GOOD JOB! You handled most situations appropriately."
     else:
-        "NEEDS IMPROVEMENT. Review security protocols and try again."
+        "NOT AMAZING. Review security protocols and try again."
     
-    "Now, let's test your security response skills with a quick challenge!"
+    "Well done on completing level 3, now you can sit back, and have a lovely read through level 4... Lets hope your memory is good..."
     
-    jump start_security_game
+    jump level_complete
 
-# Security Breach Response Mini-Game
-label start_security_game:
-    scene bg office
-    show screen top_bar
-    
-    "Welcome to the Social Engineering Defense Challenge!"
-    "In this simulation, you'll need to protect your company from various social engineering attacks."
-    
-    "Here's how it works:"
-    "1. Social engineering threats will appear on different communication channels (Email, Phone, Social Media)."
-    "2. Click on at-risk channels to secure them before attackers can exploit them."
-    "3. If an attacker reaches a vulnerable channel, you'll lose points."
-    "4. The challenge lasts for 60 seconds."
-    
-    "Are you ready to defend against social engineering attacks?"
-    
-    menu:
-        "I'm ready!":
-            jump security_game_start
-        "Show me the tutorial first":
-            jump security_game_tutorial
-    
-label security_game_tutorial:
-    "Tutorial: Social Engineering Defense"
-    
-    "Communication Channels: These represent your company's Email, Phone, and Social Media accounts."
-    "Threats: These appear as yellow warning symbols on channels that are at risk."
-    "Attackers: These appear as red dots moving toward vulnerable channels, representing phishers, impersonators, and scammers."
-    "Defense: Click on a vulnerable channel to secure it and earn points."
-    
-    "The faster you identify and secure threats, the more points you'll earn."
-    "If an attacker reaches a vulnerable channel before you secure it, you'll lose points."
-    
-    "Ready to start now?"
-    
-    menu:
-        "Let's go!":
-            jump security_game_start
-        "I need more time to prepare":
-            "Take your time. Security awareness is important!"
-            jump security_game_tutorial
-    
-label security_game_start:
-    # Initialize game variables
-    $ security_game_score = 0
-    $ vulnerabilities_patched = 0
-    $ attacks_prevented = 0
-    $ attacks_succeeded = 0
-    $ game_time = 60.0
-    $ spawn_timer = 2.0
-    $ attacker_timer = 3.0
-    $ attackers = []
-    
-    # Show the game screen - the game will run for 60 seconds
-    # The screen itself will handle the timer and jumping to results
-    show screen security_breach_game
-    
-    # This pause is just a fallback in case the screen timer fails
-    $ renpy.pause(65.0, hard=True)
-    
-    jump security_game_results
-    
-label security_game_results:
+
+############################## FORTH LEVEL ##############################
+# Level 4: Physical Security - Tailgating
+label fourth_level:
     scene bg office
     show screen top_bar
     show player happy
     with fade
     
-    "Social Engineering Defense Challenge Complete!"
+    # Initialize level variables
+    $ reported_intruder = False
+    $ noticed_id_issue = False
+    $ remembered_appearance = {}
     
-    "Your Results:"
-    "Score: [security_game_score] points"
-    "Threats Identified: [vulnerabilities_patched]"
-    "Attacks Prevented: [attacks_prevented]"
-    "Security Breaches: [attacks_succeeded]"
+    "Welcome to Level 4: Physical Security - Tailgating"
+    "In this level, you'll face a common physical security challenge: tailgating, where unauthorized individuals follow authorized personnel into secure areas."
+    "Your decisions will determine whether you maintain the security of your workplace or allow a potential security breach."
     
-    # Calculate efficiency ratio if any vulnerabilities were patched
-    if vulnerabilities_patched > 0:
-        $ efficiency = float(attacks_prevented) / vulnerabilities_patched * 100
-        $ efficiency_text = "{:.1f}%".format(efficiency)
-        "Defense Efficiency: [efficiency_text]"
+    # Start the scenario - outside the building
+    scene bg outside
+    show screen top_bar
+    show player happy
+    with fade
     
-    if security_game_score >= 100:
-        "EXCELLENT WORK! You're a social engineering defense expert!"
-        # Award achievement
-        if not persistent.achievements.get("security_responder", False):
-            $ persistent.achievements["security_responder"] = True
-            $ renpy.notify("Achievement Unlocked: Security Responder!")
-    elif security_game_score >= 50:
-        "GOOD JOB! Your quick responses protected the company from social engineering attacks."
-    else:
-        "KEEP PRACTICING! Defending against social engineering requires constant vigilance."
+    "It's a pleasant afternoon, and you've just finished your lunch break outside the company building."
+    "Several of your colleagues are chatting nearby, enjoying the last few minutes before heading back to work."
     
-    # Add the security game score to the persistent score
-    $ persistent.game_progress["score"] += security_game_score
+    show coworker1 at left
+    show coworker2 at right
+    
+    "Coworker 1" "Did you hear about the new security policy? They're getting stricter about badge access."
+    
+    "Coworker 2" "Yeah, apparently there was an incident at the downtown office. Someone walked right in behind an employee and accessed sensitive areas."
+    
+    "Coworker 1" "Well, break's almost over. We should head back in."
+    
+    hide coworker1
+    hide coworker2
+    
+    "Your colleagues walk back toward the building entrance, scanning their ID badges at the security gate."
+    "You gather your things and prepare to follow them inside."
+    
+    "Just as you approach the entrance, someone walks up beside you."
+    
+    show new_boss happy at right
+    show player happy at left
+    
+    "Unknown Person" "Beautiful day, isn't it? Much nicer to eat lunch outside than at your desk."
+    
+    show player shock at left
+    menu:
+        "Agree politely":
+            player "Absolutely. It's good to get some fresh air during the workday."
+            
+            "Unknown Person" "I couldn't agree more. I try to get outside whenever possible."
+            
+        "Respond cautiously":
+            player "Yes, it is. Do you work here? I don't think we've met."
+            
+            "Unknown Person" "Oh, I'm new. Just transferred from the downtown office. I'm heading up the IT security division now."
+            
+    "Unknown Person" "I'm Alice, by the way. Just transferred from the downtown office to head up the IT security division."
+    
+    show player happy at left
+
+    menu:
+        "Welcome him to the company":
+            player "Welcome to the company. I'm [player]. How are you finding it so far?"
+            
+            "Alice" "Thanks for the warm welcome! It's been great so far. Still getting used to the new building layout, though."
+            
+        "Ask about her role":
+            player "That's an important role. What kind of security initiatives are you planning to implement?"
+            
+            "Alice" "Well, I'm conducting a full security audit first. You'd be surprised how many vulnerabilities exist in even the most secure-seeming environments."
+            
+            $ noticed_id_issue = True
+    
+    "You chat for a few more minutes about general work topics. Alice seems knowledgeable about cybersecurity and the company structure."
+    
+    player "Well, I should probably get back to work. My break is almost over."
+    
+    "Alice" "Same here. Let's head in."
+    
+    "You both walk toward the entrance. You scan your badge at the security gate, but notice that Alice is simply walking through behind you without scanning her own ID."
+    
+    menu:
+        "Say nothing and continue inside":
+            "You decide not to say anything and continue into the building."
+            "Alice walks in behind you, nodding to the security guard who seems distracted by someone else."
+            
+            jump inside_building
+            
+        "Politely remind him about badge scanning":
+            player "Oh, don't forget to scan your badge. They're really strict about that here."
+            
+            "Alice" "Oh, right. Thanks for the reminder."
+            
+            "Alice reaches into her pocket and quickly flashes what appears to be an ID card at the scanner, but you notice the gate doesn't beep as it usually does when a badge is successfully scanned."
+            
+            $ noticed_id_issue = True
+            
+            menu:
+                "Point out that the scanner didn't beep":
+                    player "I don't think your badge registered. The scanner usually beeps."
+                    
+                    "Alice" "Really? That's strange."
+                    "Alice's expression changes slightly, showing a hint of annoyance."
+                    
+                    "Alice" "I'm your new division head. Do you really think questioning me on my first week is a good career move?"
+                    
+                    menu:
+                        "Apologize and back down":
+                            player "I'm sorry, I didn't mean to question you. Just trying to be helpful with the security procedures."
+                            
+                            "Alice" "I appreciate your attention to security, but I've got this handled. Thanks for your concern though."
+                            
+                            "His tone is dismissive as she walks past you into the building."
+                            
+                            $ noticed_id_issue = True
+                            jump inside_building
+                            
+                        "Stand firm on security policy":
+                            player "I understand you're new, but company policy requires everyone to scan their badge. It's not personal - it's about security."
+                            
+                            "Alice looks irritated but then forces a smile."
+                            
+                            "Alice" "Fine. Let me try again."
+                            
+                            "He fumbles with her badge again, and this time you hear a beep."
+                            
+                            "Alice" "There, happy now? I need to get to a meeting."
+                            
+                            "He quickly walks inside, clearly annoyed by the interaction."
+                            
+                            $ noticed_id_issue = True
+                            jump inside_building
+                
+                "Say nothing more and continue inside":
+                    "You decide not to press the issue and continue into the building."
+                    "Alice walks in behind you, putting her ID back in her pocket."
+                    
+                    $ noticed_id_issue = True
+                    jump inside_building
+
+label inside_building:
+    scene bg joint_office
+    show screen top_bar
+    show player happy
+    with fade
+    
+    "Back at your desk, you settle in to continue your work for the afternoon."
+    "A colleague stops by your desk to chat."
+
+    show player happy_flipped at right
+    show coworker1 at left
+    
+    "Coworker" "Hey, how was lunch?"
+    
+    player "It was good. I met someone who said he's the new head of IT security. Alice, I think her name was."
+    
+    "Coworker" "New head of IT security? That's strange. I was just in a meeting with the IT department this morning, and they didn't mention any new leadership."
+    
+    menu:
+        "Express concern":
+            player "That is strange. she seemed to know a lot about the company, but something felt off."
+            
+            "Coworker" "What do you mean?"
+            
+            if noticed_id_issue:
+                player "Well, she didn't properly scan her badge when we came back in from lunch. When I mentioned it, she got defensive."
+                
+                "Coworker" "That's definitely concerning. Did you get a good look at her ID?"
+                
+                menu:
+                    "Try to remember the ID":
+                        "You try to recall the brief glimpse you got of her ID card."
+                        
+                        jump flashback_scene
+                    
+                    "Admit you didn't see it clearly":
+                        player "No, she just flashed it quickly. I didn't get a good look."
+                        
+                        "Coworker" "Maybe you should mention this to security or your manager. Better safe than sorry."
+                        
+                        jump decision_to_report
+            else:
+                player "I can't put my finger on it exactly. Just a feeling."
+                
+                "Coworker" "Well, I can ask around if you want. See if anyone knows about a new IT security head."
+                
+                player "That would be helpful, thanks."
+                
+                jump decision_to_report
+        
+        "Dismiss your concerns":
+            player "I'm sure it's fine. Maybe the announcement hasn't gone out yet."
+            
+            "Coworker" "Maybe. Still, it's odd that someone would claim to be a department head if they weren't."
+            
+            "The conversation moves on to other topics, but you can't help thinking about the encounter."
+            
+            if noticed_id_issue:
+                "You remember how Alice didn't properly scan her badge..."
+                jump flashback_scene
+            else:
+                "Later in the afternoon, you start to wonder if you should report the incident."
+                jump decision_to_report
+
+label flashback_scene:
+    scene bg outside with fade
+    show screen top_bar
+    
+    "You recall the moment when Alice quickly flashed her ID card..."
+    
+    show id_card at truecenter
+    with dissolve
+    
+    "The ID looked similar to company badges, but now that you think about it, there were some differences."
+    "The photo didn't look like ours, the date definitely wasn't from the past few days, and the company logo isn't right!"
+    
+    hide id_card
+    with dissolve
+    
+    "You also remember her face more clearly now..."
+    
+    show new_boss happy at center
+    with dissolve
+    
+    menu:
+        "Study her appearance carefully":
+            "You try to memorize her features: medium height, brown hair, glasses, clean-shaven, wearing a blue suit."
+            $ remembered_appearance = {"height": "medium", "hair": "brown", "glasses": True, "facial_hair": False, "clothing": "blue suit"}
+            
+        "Focus on distinctive features":
+            "You focus on her most distinctive features: no glasses, her confident posture, and the expensive watch she was wearing."
+            $ remembered_appearance = {"glasses": True, "posture": "confident", "accessories": "expensive watch"}
+    
+    hide new_boss
+    with dissolve
+    
+    scene bg joint_office
+    show screen top_bar
+    show player happy_flipped at right
+    show coworker1 at left
+    with fade
+    
+    "Coworker" "Are you okay? You zoned out for a moment there."
+    
+    player "Sorry, I was just remembering something about that encounter that seemed off."
+    
+    "Coworker" "You should probably report this. It could be nothing, but if someone is impersonating an employee, that's a serious security breach."
+    
+    jump decision_to_report
+
+label decision_to_report:
+    "You consider whether to report the suspicious encounter to your manager."
+    
+    menu:
+        "Report the incident":
+            player "I think I should report this to our manager. Better safe than sorry when it comes to security."
+            
+            "Coworker" "That's probably a good idea. Want me to come with you?"
+            
+            player "No, that's okay. I'll send an email first to document everything while it's fresh in my mind."
+            
+            $ reported_intruder = True
+            jump email_to_manager
+            
+        "Wait and see if anything happens":
+            player "I'll keep an eye out for him. If I see anything else suspicious, I'll report it then."
+            
+            "Coworker" "Just be careful. If she is an impersonator, she could be after sensitive information."
+            
+            "You return to your work, but can't shake the feeling that something isn't right."
+            
+            "Later that afternoon, you receive an urgent company-wide email about an unauthorized individual who was spotted in the building."
+            
+            "The description matches the person you met."
+
+            show player shock at right:
+                xzoom -1.0
+            
+            "You realize you should have reported the incident immediately."
+            
+            jump level_failed_ending
+
+label email_to_manager:
+    scene bg office
+    show screen top_bar
+    with fade
+    
+    "You decide to compose an email to your Boss about the incident."
+    
+    show screen email_compose
+    with dissolve
+    
+    "You need to decide how to phrase your email. You want to be thorough but professional."
+    
+    menu:
+        "Write a direct, accusatory email":
+            $ email_content = "Subject: Security Breach Alert\n\nI believe an intruder has entered the building. A woman calling herself Alice claimed to be the new head of IT security, but according to a colleague, no such position has been filled. she also failed to properly scan her badge when entering the building. This person should be considered suspicious and potentially dangerous."
+            
+        "Write a balanced, informative email":
+            $ email_content = "Subject: Potential Security Concern\n\nI wanted to bring a potential security concern to your attention. Today I met someone who introduced herself as Alice, claiming to be the new head of IT security who transferred from the downtown office. When returning from lunch, I noticed she didn't properly scan her badge at the entrance. A colleague later mentioned they weren't aware of any new IT security leadership. While this could be a miscommunication, I thought it best to report it for further verification."
+    
+    "You review your email one last time before sending it."
+    
+    hide screen email_compose
+    show player happy at left
+    
+    "Email sent. You continue with your work, wondering if you'll hear back soon."
+    
+    "About twenty minutes later, your phone rings."
+    
+    show screen phone_interface
+    with dissolve
+    
+    "Boss" "Hi, this is Sandra from Security. We received your email about the potential security concern. Can you go to the bosses office immediatley to talk further!"
+    
+    player "Of course. I'll be right there."
+    
+    hide screen phone_interface
+    
+    jump manager_office
+
+label manager_office:
+    scene bg boss_office
+    show screen top_bar
+    show boss
+    show security_head at left:
+        xpos 0.55
+    show player shock at right:
+        xpos 0.45
+    with fade
+    
+    "You enter your Boss's office and find him speaking with the head of security."
+    
+    "Boss" "Thanks for coming so quickly. This is John from Security. We take reports like yours very seriously."
+    
+    "John - Security Head" "Based on your email and our preliminary investigation, we believe an unauthorized individual may have gained access to the building. Can you tell us exactly what happened?"
+    
+    "You recount your interaction with Alice, including all the details you can remember."
+    
+    "Security Head" "This is very helpful. We've already alerted security personnel and are reviewing camera footage. Can you describe this person in detail?"
+    
+    "This is where your observation skills are put to the test. Try to recall as many details as possible about the person you met."
+    
+    jump appearance_questions
+
+label appearance_questions:
+    "Security Head" "Let's start with some basic questions about her appearance."
+    
+    "Security Head" "How would you describe her height?"
+    
+    menu:
+        "Tall (over 6 feet)":
+            $ answer_correct = (remembered_appearance.get("height", "") == "medium")
+            if answer_correct:
+                "Security Head" "Are you sure? The camera footage suggests she was of average height."
+                $ remembered_appearance["height"] = "medium"
+            else:
+                "Security Head" "That matches what we've seen in the initial footage."
+                $ remembered_appearance["height"] = "tall"
+        
+        "Medium (5'8\" to 6')":
+            $ answer_correct = (remembered_appearance.get("height", "") == "medium")
+            if answer_correct:
+                "Security Head" "That matches what we've seen in the initial footage."
+            else:
+                "Security Head" "Okay, noted."
+            $ remembered_appearance["height"] = "medium"
+        
+        "Short (under 5'8\")":
+            $ answer_correct = (remembered_appearance.get("height", "") == "medium")
+            if answer_correct:
+                "Security Head" "Are you sure? The camera footage suggests she was of average height."
+                $ remembered_appearance["height"] = "medium"
+            else:
+                "Security Head" "That matches what we've seen in the initial footage."
+                $ remembered_appearance["height"] = "short"
+    
+    "Security Head" "What color was her hair?"
+    
+    menu:
+        "Black":
+            $ answer_correct = (remembered_appearance.get("hair", "") == "brown")
+            if answer_correct:
+                "Security Head" "The footage suggests it was more brown than black."
+                $ remembered_appearance["hair"] = "brown"
+            else:
+                "Security Head" "Noted."
+                $ remembered_appearance["hair"] = "black"
+        
+        "Brown":
+            $ answer_correct = (remembered_appearance.get("hair", "") == "brown")
+            if answer_correct:
+                "Security Head" "That matches our footage."
+            else:
+                "Security Head" "Okay, noted."
+            $ remembered_appearance["hair"] = "brown"
+        
+        "Blonde":
+            $ answer_correct = (remembered_appearance.get("hair", "") == "brown")
+            if answer_correct:
+                "Security Head" "Are you sure? The footage suggests it was brown."
+                $ remembered_appearance["hair"] = "brown"
+            else:
+                "Security Head" "Noted."
+                $ remembered_appearance["hair"] = "blonde"
+    
+    "Security Head" "Was she wearing glasses?"
+    
+    menu:
+        "Yes":
+            $ answer_correct = remembered_appearance.get("glasses", False)
+            if answer_correct:
+                "Security Head" "That matches our footage."
+            else:
+                "Security Head" "Interesting. We'll look more closely at the footage."
+            $ remembered_appearance["glasses"] = True
+        
+        "No":
+            $ answer_correct = not remembered_appearance.get("glasses", False)
+            if not answer_correct:
+                "Security Head" "The footage suggests she was wearing glasses."
+                $ remembered_appearance["glasses"] = True
+            else:
+                "Security Head" "Noted."
+                $ remembered_appearance["glasses"] = False
+    
+    "Security Head" "What was she wearing?"
+    
+    menu:
+        "Blue suit":
+            $ answer_correct = (remembered_appearance.get("clothing", "") == "blue suit")
+            if answer_correct:
+                "Security Head" "That matches what we've seen."
+            else:
+                "Security Head" "Okay, noted."
+            $ remembered_appearance["clothing"] = "blue suit"
+        
+        "Gray suit":
+            $ answer_correct = (remembered_appearance.get("clothing", "") == "blue suit")
+            if answer_correct:
+                "Security Head" "Are you sure? The footage suggests it was blue."
+                $ remembered_appearance["clothing"] = "blue suit"
+            else:
+                "Security Head" "Noted."
+                $ remembered_appearance["clothing"] = "gray suit"
+        
+        "Casual attire (no suit)":
+            $ answer_correct = (remembered_appearance.get("clothing", "") == "blue suit")
+            if answer_correct:
+                "Security Head" "The footage shows him in formal business attire, specifically a blue suit."
+                $ remembered_appearance["clothing"] = "blue suit"
+            else:
+                "Security Head" "Interesting. We'll review the footage again."
+                $ remembered_appearance["clothing"] = "casual"
+    
+    "Security Head" "Did you notice any distinctive accessories or features?"
+    
+    menu:
+        "Expensive watch":
+            $ answer_correct = (remembered_appearance.get("accessories", "") == "expensive watch")
+            if answer_correct:
+                "Security Head" "Good observation. That could be helpful for identification."
+            else:
+                "Security Head" "Interesting detail. We'll look for that."
+            $ remembered_appearance["accessories"] = "expensive watch"
+        
+        "Company lanyard/badge holder":
+            "Security Head" "That's particularly concerning if she was displaying what appeared to be company credentials."
+            $ remembered_appearance["accessories"] = "fake credentials"
+        
+        "Briefcase or laptop bag":
+            "Security Head" "That's concerning. she could have been attempting to remove company property or information."
+            $ remembered_appearance["accessories"] = "bag"
+    
+    "After answering all the questions, the security head reviews his notes."
+    
+    "Security Head" "Thank you for this detailed information. It will be extremely helpful in our investigation."
+    
+    "Boss" "We've already increased security at all entrances and are conducting a sweep of the building."
+    
+    "Security Head" "Your quick reporting of this incident was exactly the right thing to do. This is how we prevent security breaches."
+    
+    # Count how many details were remembered correctly
+    $ correct_details = 0
+    if remembered_appearance.get("height", "") == "medium":
+        $ correct_details += 1
+    if remembered_appearance.get("hair", "") == "brown":
+        $ correct_details += 1
+    if remembered_appearance.get("glasses", False):
+        $ correct_details += 1
+    if remembered_appearance.get("clothing", "") == "blue suit":
+        $ correct_details += 1
+    if remembered_appearance.get("accessories", "") == "expensive watch":
+        $ correct_details += 1
+    
+    # Award achievement if at least 4 details were remembered correctly
+    if correct_details >= 4 and not persistent.achievements.get("detail_oriented", False):
+        $ persistent.achievements["detail_oriented"] = True
+        $ renpy.notify("Achievement Unlocked: Detail Oriented!")
+    
+    jump level_complete_ending
+
+label level_complete_ending:
+    scene bg office
+    show screen top_bar
+    show player happy
+    with fade
+    
+    "Later that day, you receive an update from security."
+    
+    show player happy at left
+    show security_head at right
+    
+    "Security Head" "Thanks to your report, we were able to identify and remove an unauthorized individual from the premises before any damage could be done."
+    
+    "Security Head" "Our investigation revealed she was attempting to access sensitive company information. Your attention to security protocols potentially prevented a significant data breach."
+    
+    hide security_head
+
+    "The security head leaves, and the Boss walks in"
+
+    show boss at right
+
+    "Boss" "The company would like to recognize your vigilance. You'll be featured in next month's security newsletter as an example of excellent security awareness."
+    
+    "You feel proud that your actions helped protect the company."
+    
+    hide boss
+    show player happy
+
+    "LEVEL COMPLETE!"
+    "You successfully identified and reported a social engineering attempt using tailgating to gain physical access to the building."
+    
+    "Key lessons learned:"
+    "1. Always ensure proper badge scanning procedures are followed, even by those claiming authority."
+    "2. Trust your instincts when something seems suspicious."
+    "3. Report security concerns promptly through appropriate channels."
+    "4. Pay attention to details that could help identify security threats."
+    
+    # Award achievement for completing Level 4
+    if not persistent.achievements.get("physical_security_expert", False):
+        $ persistent.achievements["physical_security_expert"] = True
+        $ renpy.notify("Achievement Unlocked: Physical Security Expert!")
+    
+    # Add points to score
+    $ persistent.game_progress["score"] += 50
     $ save_progress()
     
-    "Remember these key lessons about social engineering defense:"
-    "1. Always verify the identity of anyone requesting sensitive information."
-    "2. Be suspicious of urgent requests that pressure you to act quickly."
-    "3. Use established company channels for sharing sensitive documents."
-    "4. When in doubt, escalate to your manager or security team."
-    "5. Respond quickly to security threats before they can be exploited."
-    
-    # Use the existing level_complete label
     jump level_complete
+
+label level_failed_ending:
+    scene bg boss_office
+    show screen top_bar
+    show boss at right
+    show player shock at left
+    with fade
+    
+    "The next morning, you're called into your Boss's office."
+    
+    "Boss" "We had a security incident yesterday. An unauthorized individual gained access to the building and accessed several secure areas before being detected."
+    
+    "Boss" "Security footage shows you interacting with this person at the entrance. Did you notice anything suspicious?"
+
+    show player upset at left
+    
+    player "Yes, I did notice some things that seemed off, but I wasn't sure enough to report it."
+    
+    "Boss" "This is exactly why we emphasize the importance of reporting security concerns. Even if you're not certain, it's better to report a false alarm than to miss a genuine threat."
+    
+    "Boss" "In this case, the individual was able to access sensitive information before being caught. This could have serious consequences for the company."
+    
+    "You feel a sinking feeling as you realize the impact of your decision not to report the suspicious behavior."
+    
+    "LEVEL FAILED!"
+    "You noticed suspicious behavior but failed to report it, allowing a security breach to occur."
+    
+    "Key lessons learned:"
+    "1. Always report suspicious behavior, even if you're not certain."
+    "2. Security is everyone's responsibility, not just the security team's."
+    "3. Tailgating is a common social engineering tactic to gain unauthorized physical access."
+    "4. Quick reporting can prevent or minimize the impact of security breaches."
+    
+    # Deduct points from score
+    $ persistent.game_progress["score"] -= 10
+    $ save_progress()
+    
+    jump level_failed

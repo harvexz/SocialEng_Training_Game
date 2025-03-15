@@ -22,8 +22,15 @@ init python:
             "security_expert": False,  # For completing all levels
             "perfect_score": False,  # For getting a perfect score on any level
             "level_three_master": False,  # For getting Expert rank in level 3
-            "security_responder": False  # For scoring high in the Security Breach Response game
+            "physical_security_expert": False,  # For successfully identifying and reporting a tailgating attempt in Level 4
+            "detail_oriented": False   # For accurately remembering details about the intruder in Level 4
         }
+    else:
+        # Remove outdated achievements if they exist
+        if "security_responder" in persistent.achievements:
+            del persistent.achievements["security_responder"]
+        if "defense_master" in persistent.achievements:
+            del persistent.achievements["defense_master"]
     
     # Initialize rank data if not already present
     if not hasattr(persistent, "rank_data") or persistent.rank_data is None:

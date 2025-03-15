@@ -39,6 +39,14 @@
             225
         ]
     },
+    "email_to_manager_43081485": {
+        "area": [
+            640,
+            270,
+            480,
+            225
+        ]
+    },
     "first_level_2241517e": {
         "area": [
             880,
@@ -57,10 +65,61 @@
         ],
         "properties": "bottom_right"
     },
+    "flashback_scene_2a6730e8": {
+        "area": [
+            640,
+            270,
+            560,
+            225
+        ],
+        "properties": "bottom_right"
+    },
+    "fourth_level_076dcc9e": {
+        "area": [
+            640,
+            270,
+            560,
+            225
+        ]
+    },
+    "fourth_level_d4d3be10": {
+        "area": [
+            720,
+            270,
+            480,
+            225
+        ]
+    },
+    "inside_building_2e3370ea": {
+        "area": [
+            640,
+            225,
+            560,
+            270
+        ],
+        "properties": "bottom_right"
+    },
+    "inside_building_58ae8286": {
+        "area": [
+            640,
+            270,
+            560,
+            225
+        ],
+        "properties": "bottom_right"
+    },
     "insist_policy_ed896bbc": {
         "area": [
             720,
             225,
+            480,
+            225
+        ]
+    },
+    "level_failed_ending_4a6b86b0": {
+        "area": [
+            720,
+            270,
             480,
             225
         ]

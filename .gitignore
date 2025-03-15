@@ -6,6 +6,7 @@ script.rpyc
 screens.rpyc
 persostent_data.rpyc
 gui.rpyc
+options.rpyc
 cache/
 .vscode/
 tl/
