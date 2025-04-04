@@ -35,6 +35,9 @@ init python:
         globals()[score_variable] += total_points
         
         return total_points
+        
+    # Global variable to track which challenge the player is currently in
+    current_challenge = ""
 
 # Declare characters used by this game. The color argument colorizes the
 # name of the character.
@@ -61,6 +64,8 @@ label tutorial:
     "Firstly, you can click anyware on the screen to continue through each dialog."
     "Or press any button on your keyboad!"
 
+    "Secondly, if you ever miss something, you can click the small back button just below this text!"
+
     show player happy
     "Hi, I'm the character you will be playing as."
 
@@ -75,18 +80,27 @@ label tutorial:
 
     menu:
         "I'm ready":
-            "Amazing! Let's get started!"
-            "We will jump back to the main menu, where you can start the next level!"
-            if not persistent.game_progress["tutorial_seen"]:
-                $ persistent.game_progress["tutorial_seen"] = True
-                $ save_progress()
-                $ persistent.game_progress["current_level"] = "first_level"  # Set next level
-            else:
-                # Check if we're returning from a previous level selection
-                if hasattr(persistent.game_progress, "temp_level") and persistent.game_progress["temp_level"]:
-                    $ persistent.game_progress["current_level"] = persistent.game_progress["temp_level"]
-                    $ persistent.game_progress["temp_level"] = None
-            return
+            "Do you concent for your data to be anonymously used?"
+
+            menu:
+                "Yes, my data can be used anonymously":
+                    "Amazing! Let's get started!"
+                    "We will jump back to the main menu, where you can start the next level!"
+                    if not persistent.game_progress["tutorial_seen"]:
+                        $ persistent.game_progress["tutorial_seen"] = True
+                        $ persistent.game_progress["level_status"] = "Conset Given"
+                        $ save_progress()
+                        $ persistent.game_progress["current_level"] = "first_level"  # Set next level
+                    else:
+                        # Check if we're returning from a previous level selection
+                        if hasattr(persistent.game_progress, "temp_level") and persistent.game_progress["temp_level"]:
+                            $ persistent.game_progress["current_level"] = persistent.game_progress["temp_level"]
+                            $ persistent.game_progress["temp_level"] = None
+                    return
+                
+                "No, I don't want my data to be used":
+                    "That's okay, sadly you won't be able to play then!"
+                    jump tutorial
         
         "Wait im confused... say that again":
             jump tutorial
@@ -196,6 +210,9 @@ label access_granted:
     show boss at right
     "You allowed an unauthorized person into the server room. If this were real, sensitive company data could now be compromised."
     "LEVEL FAILED!"
+
+    $ persistent.game_progress["score"] += 100
+    $ save_progress()
     
     jump level_failed
 
@@ -374,8 +391,11 @@ label phone_call_challenge:
     
     "Unknown Caller" "Hello, this is Dave from the IT department. We're conducting a security audit and need to verify some information."
     
+    # Set the current challenge for timeout handling
+    $ current_challenge = "phone_call"
+    
     # Begin timer
-    $ timer_duration = 15.0  # 15 seconds
+    $ timer_duration = 20.0  # 20 seconds
     $ timer_active = True
     $ start_time = renpy.time.time()
 
@@ -407,7 +427,7 @@ label phone_call_timeout:
     "Unknown Caller" "Hello? Are you there? This is urgent - we need your credentials now to prevent a security breach!"
     
     # Begin timer
-    $ timer_duration = 15.0  # 15 seconds
+    $ timer_duration = 20.0  # 20 seconds
     $ timer_active = True
     $ start_time = renpy.time.time()
 
@@ -427,8 +447,11 @@ label phone_call_verify:
     
     "Unknown Caller" "Uh... I don't have it on me right now. But this is urgent - we need to verify your network credentials immediately."
     
+    # Set the current challenge for timeout handling
+    $ current_challenge = "phone_call_verify"
+    
     # Begin timer
-    $ timer_duration = 15.0  # 15 seconds
+    $ timer_duration = 20.0  # 20 seconds
     $ timer_active = True
     $ start_time = renpy.time.time()
 
@@ -451,8 +474,11 @@ label phone_call_verify:
 label phone_call_manager:
     "Unknown Caller" "It's... uh... John. John Smith. Look, we're dealing with a potential security breach and need your password right away."
     
+    # Set the current challenge for timeout handling
+    $ current_challenge = "phone_call_manager"
+    
     # Begin timer
-    $ timer_duration = 15.0  # 15 seconds
+    $ timer_duration = 20.0  # 20 seconds
     $ timer_active = True
     $ start_time = renpy.time.time()
 
@@ -471,8 +497,11 @@ label phone_call_manager:
 label phone_call_redirect:
     "Unknown Caller" "This is time-sensitive and can't wait for an email. We need to verify your account details now to prevent unauthorized access."
     
+    # Set the current challenge for timeout handling
+    $ current_challenge = "phone_call_redirect"
+    
     # Begin timer
-    $ timer_duration = 15.0  # 15 seconds
+    $ timer_duration = 20.0  # 20 seconds
     $ timer_active = True
     $ start_time = renpy.time.time()
 
@@ -495,8 +524,11 @@ label phone_call_redirect:
 label phone_call_specifics:
     "Unknown Caller" "We've detected unusual login attempts to the company VPN using your credentials. We need to verify your password to confirm it wasn't compromised."
     
+    # Set the current challenge for timeout handling
+    $ current_challenge = "phone_call_specifics"
+    
     # Begin timer
-    $ timer_duration = 15.0  # 15 seconds
+    $ timer_duration = 20.0  # 20 seconds
     $ timer_active = True
     $ start_time = renpy.time.time()
 
@@ -517,8 +549,11 @@ label phone_call_specifics:
 label phone_call_continue:
     "Unknown Caller" "Great. First, I need to verify your username and password for the company portal. Can you provide those for me?"
     
+    # Set the current challenge for timeout handling
+    $ current_challenge = "phone_call_continue"
+    
     # Begin timer
-    $ timer_duration = 15.0  # 15 seconds
+    $ timer_duration = 20.0  # 20 seconds
     $ timer_active = True
     $ start_time = renpy.time.time()
 
@@ -539,8 +574,11 @@ label phone_call_continue:
 label phone_call_ticket:
     "Unknown Caller" "We haven't generated a ticket yet because of the urgency. We need your credentials now to stop the potential breach."
     
+    # Set the current challenge for timeout handling
+    $ current_challenge = "phone_call_ticket"
+    
     # Begin timer
-    $ timer_duration = 15.0  # 15 seconds
+    $ timer_duration = 20.0  # 20 seconds
     $ timer_active = True
     $ start_time = renpy.time.time()
 
@@ -582,7 +620,7 @@ label phone_call_success:
     "The caller becomes frustrated and hangs up."
     "Later, you confirm with the real IT department that they didn't make any calls about security audits today."
     
-    "EXCELLENT WORK! You protected your credentials from a social engineering attack."
+    "EXCELLENT WORK! You spotted that Voice Phishing (Vishing) attempt! No data was compromised."
     
     $ persistent.game_progress["score"] += phone_score
     $ save_progress()
@@ -602,6 +640,9 @@ label chat_challenge:
     
     # Initialize chat history for the new chat interface
     $ _chat_history = []
+    
+    # Set the current challenge for timeout handling
+    $ current_challenge = "chat"
     
     show screen chat_interface
     with dissolve
@@ -985,6 +1026,9 @@ label document_challenge:
     
     "You receive an email with an attached document that requires your urgent review and approval."
     
+    # Set the current challenge for timeout handling
+    $ current_challenge = "document"
+    
     show screen document_interface
     with dissolve
     
@@ -1090,6 +1134,9 @@ label document_challenge_two:
     with fade
     
     "You receive an email with a legal document that requires your digital signature."
+    
+    # Set the current challenge for timeout handling
+    $ current_challenge = "document_two"
     
     # Create a new document interface for the legal document
     show screen legal_document_interface
@@ -1286,7 +1333,7 @@ label fourth_level:
     show player happy at left
 
     menu:
-        "Welcome him to the company":
+        "Welcome her to the company":
             player "Welcome to the company. I'm [player]. How are you finding it so far?"
             
             "Alice" "Thanks for the warm welcome! It's been great so far. Still getting used to the new building layout, though."
@@ -1316,6 +1363,10 @@ label fourth_level:
         "Politely remind him about badge scanning":
             player "Oh, don't forget to scan your badge. They're really strict about that here."
             
+            # Add +1 point for confronting nicely
+            $ persistent.game_progress["score"] += 1
+            $ renpy.notify("+1 point for politely enforcing security protocol")
+            
             "Alice" "Oh, right. Thanks for the reminder."
             
             "Alice reaches into her pocket and quickly flashes what appears to be an ID card at the scanner, but you notice the gate doesn't beep as it usually does when a badge is successfully scanned."
@@ -1337,23 +1388,27 @@ label fourth_level:
                             
                             "Alice" "I appreciate your attention to security, but I've got this handled. Thanks for your concern though."
                             
-                            "His tone is dismissive as she walks past you into the building."
+                            "Her tone is dismissive as she walks past you into the building."
                             
                             $ noticed_id_issue = True
                             jump inside_building
                             
-                        "Stand firm on security policy":
-                            player "I understand you're new, but company policy requires everyone to scan their badge. It's not personal - it's about security."
+                        
+                        "I understand you're new, but company policy requires everyone to scan their badge. It's not personal - it's about security.":
+                            
+                            # Add -1 point for pushing too far
+                            $ persistent.game_progress["score"] -= 1
+                            $ renpy.notify("-1 point for being too confrontational")
                             
                             "Alice looks irritated but then forces a smile."
                             
                             "Alice" "Fine. Let me try again."
                             
-                            "He fumbles with her badge again, and this time you hear a beep."
+                            "She fumbles with her badge again, and this time you hear a beep."
                             
                             "Alice" "There, happy now? I need to get to a meeting."
                             
-                            "He quickly walks inside, clearly annoyed by the interaction."
+                            "She quickly walks inside, clearly annoyed by the interaction."
                             
                             $ noticed_id_issue = True
                             jump inside_building
@@ -1386,6 +1441,10 @@ label inside_building:
     menu:
         "Express concern":
             player "That is strange. she seemed to know a lot about the company, but something felt off."
+            
+            # Add +1 point for mentioning concern to colleague
+            $ persistent.game_progress["score"] += 1
+            $ renpy.notify("+1 point for sharing security concerns")
             
             "Coworker" "What do you mean?"
             
@@ -1451,15 +1510,18 @@ label flashback_scene:
     
     menu:
         "Study her appearance carefully":
-            "You try to memorize her features: medium height, brown hair, glasses, clean-shaven, wearing a blue suit."
-            $ remembered_appearance = {"height": "medium", "hair": "brown", "glasses": True, "facial_hair": False, "clothing": "blue suit"}
+            "You try to memorize her features: medium height, brown hair, no glasses, wearing a navy blue/black suit with an expensive watch."
+            $ remembered_appearance = {"height": "medium", "hair": "brown", "glasses": False, "id_card": True, "lanyard": False, "clothing": "suit", "clothing_color": "navy blue/black", "accessories": "expensive watch"}
             
         "Focus on distinctive features":
-            "You focus on her most distinctive features: no glasses, her confident posture, and the expensive watch she was wearing."
-            $ remembered_appearance = {"glasses": True, "posture": "confident", "accessories": "expensive watch"}
+            "You focus on her most distinctive features: her confident posture, the expensive watch she was wearing, and her navy blue/black suit."
+            $ remembered_appearance = {"height": "medium", "hair": "brown", "glasses": False, "id_card": True, "lanyard": False, "clothing": "suit", "clothing_color": "navy blue/black", "accessories": "expensive watch"}
     
     hide new_boss
     with dissolve
+
+    $ persistent.game_progress["score"] += 1
+    $ renpy.notify("+2 points for trying to remember her details")
     
     scene bg joint_office
     show screen top_bar
@@ -1523,8 +1585,16 @@ label email_to_manager:
         "Write a direct, accusatory email":
             $ email_content = "Subject: Security Breach Alert\n\nI believe an intruder has entered the building. A woman calling herself Alice claimed to be the new head of IT security, but according to a colleague, no such position has been filled. she also failed to properly scan her badge when entering the building. This person should be considered suspicious and potentially dangerous."
             
+            # Add -1 point for sending rude email
+            $ persistent.game_progress["score"] -= 1
+            $ renpy.notify("-1 point for overly accusatory tone")
+            
         "Write a balanced, informative email":
             $ email_content = "Subject: Potential Security Concern\n\nI wanted to bring a potential security concern to your attention. Today I met someone who introduced herself as Alice, claiming to be the new head of IT security who transferred from the downtown office. When returning from lunch, I noticed she didn't properly scan her badge at the entrance. A colleague later mentioned they weren't aware of any new IT security leadership. While this could be a miscommunication, I thought it best to report it for further verification."
+            
+            # Add +1 point for sending nice email
+            $ persistent.game_progress["score"] += 1
+            $ renpy.notify("+1 point for professional communication")
     
     "You review your email one last time before sending it."
     
@@ -1588,6 +1658,7 @@ label appearance_questions:
         "Medium (5'8\" to 6')":
             $ answer_correct = (remembered_appearance.get("height", "") == "medium")
             if answer_correct:
+                $ renpy.notify("+1 point for remembering her height")
                 "Security Head" "That matches what we've seen in the initial footage."
             else:
                 "Security Head" "Okay, noted."
@@ -1617,6 +1688,7 @@ label appearance_questions:
         "Brown":
             $ answer_correct = (remembered_appearance.get("hair", "") == "brown")
             if answer_correct:
+                $ renpy.notify("+1 point for remembering her hair colour")
                 "Security Head" "That matches our footage."
             else:
                 "Security Head" "Okay, noted."
@@ -1645,58 +1717,96 @@ label appearance_questions:
         "No":
             $ answer_correct = not remembered_appearance.get("glasses", False)
             if not answer_correct:
-                "Security Head" "The footage suggests she was wearing glasses."
+                "Security Head" "Amazing memory, this aligns with what I saw"
                 $ remembered_appearance["glasses"] = True
             else:
                 "Security Head" "Noted."
+                $ renpy.notify("+1 point for remembering she didn't have glasses")
                 $ remembered_appearance["glasses"] = False
     
-    "Security Head" "What was she wearing?"
+    "Security Head" "Did she have an ID card visible?"
     
     menu:
-        "Blue suit":
-            $ answer_correct = (remembered_appearance.get("clothing", "") == "blue suit")
-            if answer_correct:
-                "Security Head" "That matches what we've seen."
-            else:
-                "Security Head" "Okay, noted."
-            $ remembered_appearance["clothing"] = "blue suit"
+        "Yes":
+            $ answer_correct = True
+            $ renpy.notify("+1 point for remembering she had an ID card")
+            "Security Head" "That matches our footage. This is concerning as it suggests she had a counterfeit ID."
+            $ remembered_appearance["id_card"] = True
         
-        "Gray suit":
-            $ answer_correct = (remembered_appearance.get("clothing", "") == "blue suit")
-            if answer_correct:
-                "Security Head" "Are you sure? The footage suggests it was blue."
-                $ remembered_appearance["clothing"] = "blue suit"
-            else:
-                "Security Head" "Noted."
-                $ remembered_appearance["clothing"] = "gray suit"
-        
-        "Casual attire (no suit)":
-            $ answer_correct = (remembered_appearance.get("clothing", "") == "blue suit")
-            if answer_correct:
-                "Security Head" "The footage shows him in formal business attire, specifically a blue suit."
-                $ remembered_appearance["clothing"] = "blue suit"
-            else:
-                "Security Head" "Interesting. We'll review the footage again."
-                $ remembered_appearance["clothing"] = "casual"
+        "No":
+            $ answer_correct = False
+            "Security Head" "Our footage shows she did have what appeared to be an ID card. This is concerning as it suggests she had a counterfeit ID."
+            $ remembered_appearance["id_card"] = True
     
-    "Security Head" "Did you notice any distinctive accessories or features?"
+    "Security Head" "Was she wearing a company lanyard?"
+    
+    menu:
+        "Yes":
+            $ answer_correct = False
+            "Security Head" "Interesting. Our footage doesn't show a lanyard. We'll look into this further."
+            $ remembered_appearance["lanyard"] = False
+        
+        "No":
+            $ answer_correct = True
+            $ renpy.notify("+1 point for remembering she didn't have a lanyard")
+            "Security Head" "That matches our footage. Most employees wear their company lanyards, which is another red flag."
+            $ remembered_appearance["lanyard"] = False
+    
+    "Security Head" "What type of clothing was she wearing?"
+    
+    menu:
+        "Casual clothes (jeans, t-shirt)":
+            $ answer_correct = False
+            "Security Head" "Our footage shows she was wearing more formal attire. This is helpful information."
+            $ remembered_appearance["clothing"] = "suit"
+        
+        "Business casual (slacks, button-up shirt)":
+            $ answer_correct = False
+            "Security Head" "Our footage shows she was wearing more formal attire. This is helpful information."
+            $ remembered_appearance["clothing"] = "suit"
+        
+        "Formal suit":
+            $ answer_correct = True
+            $ renpy.notify("+1 point for remembering she was wearing a suit")
+            "Security Head" "That matches our footage. She was dressed professionally, which likely helped her blend in."
+            $ remembered_appearance["clothing"] = "suit"
+    
+    "Security Head" "What color was her clothing?"
+    
+    menu:
+        "Navy blue/Black":
+            $ answer_correct = True
+            $ renpy.notify("+1 point for remembering her clothing colour")
+            "Security Head" "That matches our footage. Good observation."
+            $ remembered_appearance["clothing_color"] = "navy blue/black"
+        
+        "Grey":
+            $ answer_correct = False
+            "Security Head" "Our footage suggests it was darker - more of a navy blue or black. But this is still helpful."
+            $ remembered_appearance["clothing_color"] = "navy blue/black"
+        
+        "Brown":
+            $ answer_correct = False
+            "Security Head" "Our footage suggests it was darker - more of a navy blue or black. But this is still helpful."
+            $ remembered_appearance["clothing_color"] = "navy blue/black"
+    
+    "Security Head" "Did you notice any distinctive accessories?"
     
     menu:
         "Expensive watch":
-            $ answer_correct = (remembered_appearance.get("accessories", "") == "expensive watch")
-            if answer_correct:
-                "Security Head" "Good observation. That could be helpful for identification."
-            else:
-                "Security Head" "Interesting detail. We'll look for that."
+            $ answer_correct = True
+            $ renpy.notify("+1 point for remembering her watch")
+            "Security Head" "Good observation. That could be helpful for identification."
             $ remembered_appearance["accessories"] = "expensive watch"
         
         "Company lanyard/badge holder":
-            "Security Head" "That's particularly concerning if she was displaying what appeared to be company credentials."
+            $ answer_correct = False
+            "Security Head" "That's particularly concerning if she was displaying what appeared to be company credentials, but our footage doesn't show a lanyard."
             $ remembered_appearance["accessories"] = "fake credentials"
         
         "Briefcase or laptop bag":
-            "Security Head" "That's concerning. she could have been attempting to remove company property or information."
+            $ answer_correct = False
+            "Security Head" "That's concerning. She could have been attempting to remove company property or information, but our footage doesn't show a bag."
             $ remembered_appearance["accessories"] = "bag"
     
     "After answering all the questions, the security head reviews his notes."
@@ -1713,15 +1823,21 @@ label appearance_questions:
         $ correct_details += 1
     if remembered_appearance.get("hair", "") == "brown":
         $ correct_details += 1
-    if remembered_appearance.get("glasses", False):
+    if remembered_appearance.get("glasses", False) == False:
         $ correct_details += 1
-    if remembered_appearance.get("clothing", "") == "blue suit":
+    if remembered_appearance.get("id_card", False) == True:
+        $ correct_details += 1
+    if remembered_appearance.get("lanyard", True) == False:
+        $ correct_details += 1
+    if remembered_appearance.get("clothing", "") == "suit":
+        $ correct_details += 1
+    if remembered_appearance.get("clothing_color", "") == "navy blue/black":
         $ correct_details += 1
     if remembered_appearance.get("accessories", "") == "expensive watch":
         $ correct_details += 1
     
     # Award achievement if at least 4 details were remembered correctly
-    if correct_details >= 4 and not persistent.achievements.get("detail_oriented", False):
+    if correct_details >= 7 and not persistent.achievements.get("detail_oriented", False):
         $ persistent.achievements["detail_oriented"] = True
         $ renpy.notify("Achievement Unlocked: Detail Oriented!")
     
@@ -1749,6 +1865,7 @@ label level_complete_ending:
     show boss at right
 
     "Boss" "The company would like to recognize your vigilance. You'll be featured in next month's security newsletter as an example of excellent security awareness."
+    "Boss" "She tried to trick you by using her fake 'Authority'. Apparently social engineers do this a lot!"
     
     "You feel proud that your actions helped protect the company."
     
@@ -1763,6 +1880,13 @@ label level_complete_ending:
     "2. Trust your instincts when something seems suspicious."
     "3. Report security concerns promptly through appropriate channels."
     "4. Pay attention to details that could help identify security threats."
+
+
+    "THANK YOU!!"
+    "YOU HAVE FINISHED ALL MY LEVELS"
+    "YOU CAN CONTINUE HAVING A LOOK ARROUND, OR PLAY ANYTHING AGAIN!"
+    "Maybe you can find a bug, see where other paths take you"
+    "Please let me know what you think... AND MOST IMPORTANT, tell me you have finished :)"
     
     # Award achievement for completing Level 4
     if not persistent.achievements.get("physical_security_expert", False):
@@ -1812,3 +1936,52 @@ label level_failed_ending:
     $ save_progress()
     
     jump level_failed
+
+label timeout_handler:
+    # This label handles timeout events from any timed challenge
+    # Hide the timer screen (just to be sure)
+    $ timer_active = False
+    hide screen countdown_timer
+    
+    # Check which challenge the player is in and direct them to the appropriate timeout label
+    if "phone_call" in current_challenge:
+        jump phone_call_timeout
+    elif "chat" in current_challenge:
+        jump chat_timeout
+    elif "document" in current_challenge:
+        jump document_timeout
+    else:
+        # Default timeout handling if we can't determine the specific challenge
+        "Time's up! You took too long to respond."
+        $ persistent.game_progress["score"] -= 5
+        $ save_progress()
+        jump level_failed
+
+# Add missing timeout handlers
+label chat_timeout:
+    "You hesitated too long and the conversation moved on without a proper response."
+    "The person on the other end becomes suspicious of your delay."
+    
+    $ timer_active = False
+    hide screen countdown_timer
+    
+    "Chat Challenge: FAILED"
+    $ persistent.game_progress["score"] -= 5
+    $ save_progress()
+    "Let's continue to the next challenge."
+    
+    jump document_challenge
+    
+label document_timeout:
+    "You took too long to review the document and make a decision."
+    "In a real-world scenario, delays could lead to missed deadlines or opportunities for attackers."
+    
+    $ timer_active = False
+    hide screen countdown_timer
+    
+    "Document Challenge: FAILED"
+    $ persistent.game_progress["score"] -= 5
+    $ save_progress()
+    "Let's continue to the next challenge."
+    
+    jump document_challenge_two

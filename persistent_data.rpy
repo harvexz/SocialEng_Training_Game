@@ -40,7 +40,9 @@ init python:
                 "Novice": 0,
                 "Intermediate": 50,
                 "Expert": 100,
-                "Elite": 200
+                "Elite": 275,
+                "Master": 350,
+                "Hacker": 600
             }
         }
 
@@ -53,7 +55,8 @@ init python:
                 "body": "Dear CyberCorp Team,\n\nWelcome to this month's CyberCorp Security Newsletter. Our goal is to keep you informed about the latest security trends, threats, and best practices to help protect both our company and your personal information.\n\n**Key Updates:**\n\n1. **Our Official URLs:**\n   - https://www.cybercorp.com\n   - https://portal.cybercorp.com\n\n2. **Recognizing Genuine Emails:**\n   - Official CyberCorp emails will always come from '@cybercorp.com' domains.\n   - For security-related emails, look for addresses like 'security@cybercorp.com' or 'it-support@cybercorp.com'.\n\n3. **Security Tips:**\n   - Never click on suspicious links or download unexpected attachments.\n   - Always verify the sender's email address carefully.\n   - If in doubt, report suspicious emails to security@cybercorp.com.\n\nStay vigilant, and thank you for helping keep CyberCorp secure.\n\nBest regards,\nCyber Security Team",
                 "is_phishing": False,
                 "difficulty_level": 1,
-                "is_external": False
+                "is_external": False,
+                "error_hint": "This is a legitimate security newsletter from the company domain with good security tips."
             },
             {
                 "from": "IT Support <it-support@cybercorp.com>",
@@ -61,7 +64,8 @@ init python:
                 "body": "Dear user,\n\nWe have detected that your current password is set to expire within the next 24 hours. To maintain uninterrupted access to your account, please follow the link below to reset your password immediately:\n\n[www.cybercorp-security.com/reset-password]\n\nFailure to update your password may result in restricted access to key systems. If you believe this message was sent in error, contact IT Support directly.\n\nStay secure,\nIT Support Team",
                 "is_phishing": True,
                 "difficulty_level": 2,
-                "is_external": False
+                "is_external": False,
+                "error_hint": "Check the URL! The domain is cybercorp-security.com, not cybercorp.com. Legitimate password resets come from the company domain."
             },
             {
                 "from": "John.Doe@cybercorp.com",
@@ -69,7 +73,8 @@ init python:
                 "body": "Hey,\n\nI've compiled the latest updates on the project, including changes to the timeline and deliverables. Please review the attached document and let me know your thoughts before our next team meeting.\n\nThanks,\nJohn",
                 "is_phishing": False,
                 "difficulty_level": 1,
-                "is_external": False
+                "is_external": False,
+                "error_hint": "This is a normal internal email from a coworker with appropriate context. No suspicious links or attachments are mentioned."
             },
             {
                 "from": "HR Department <hr@cybercorp.com>",
@@ -77,7 +82,8 @@ init python:
                 "body": "Dear CyberCorp Employee,\n\nDue to recent changes in our benefits provider's policies, we require all employees to review and acknowledge the updated terms. Please download the attached document and sign electronically by tomorrow:\n\n[hr-cybercorp.com/login]\n\nFailure to comply may affect your eligibility for certain benefits. If you have questions, please reach out to the HR team.\n\nBest regards,\nHR Department",
                 "is_phishing": True,
                 "difficulty_level": 3,
-                "is_external": False
+                "is_external": False,
+                "error_hint": "Notice the suspicious link domain (hr-cybercorp.com instead of cybercorp.com) and the urgency creating pressure to act quickly."
             },
             {
                 "from": "Marketing <newsletter@trustedsource.com>",
@@ -85,7 +91,8 @@ init python:
                 "body": "Hello Team,\n\nWe're excited to share the January edition of the CyberCorp newsletter! Inside, you'll find highlights of recent company initiatives, employee achievements, and upcoming events. Stay informed and connected with your colleagues across departments.\n\nBest,\nThe Marketing Team",
                 "is_phishing": False,
                 "difficulty_level": 1,
-                "is_external": True
+                "is_external": True,
+                "error_hint": "While this is from an external email, it's a trusted partner domain with no suspicious links or requests for action."
             },
             {
                 "from": "Security Alert <alerts@cybercorp-security.com>",
@@ -93,7 +100,8 @@ init python:
                 "body": "Dear Employee,\n\nWe've identified an unusual login attempt to your CyberCorp account from an unfamiliar device located in a different region. For your security, we recommend verifying your account activity immediately by clicking the link below:\n\n[cybercorp-security.com/verify]\n\nIf this was not you, please secure your account promptly to prevent unauthorized access.\n\nRegards,\nCyberCorp Security Team",
                 "is_phishing": True,
                 "difficulty_level": 4,
-                "is_external": False
+                "is_external": False,
+                "error_hint": "This uses fear tactics and urgency to trick you. The domain (cybercorp-security.com) is not the legitimate company domain."
             },
             {
                 "from": "CEO <michael.smith@cybercorp.com>",
@@ -101,7 +109,8 @@ init python:
                 "body": "Hi,\n\nI'm currently in a meeting and need you to process an urgent wire transfer for a new vendor. Please don't delay, as it's time-sensitive. Here are the payment details:\n\n[Vendor Payment Information]\n\nLet me know once it's done.\n\nThanks,\nMichael",
                 "is_phishing": True,
                 "difficulty_level": 5,
-                "is_external": False
+                "is_external": False,
+                "error_hint": "CEO fraud! This uses authority and urgency to bypass normal financial controls. CEOs don't typically request urgent wire transfers via email."
             },
             {
                 "from": "Jane.Doe@trustedpartner.com",
@@ -109,7 +118,8 @@ init python:
                 "body": "Hello,\n\nI wanted to inform you that the meeting scheduled for tomorrow has been rescheduled to next Monday at 2 PM. Please update your calendar accordingly.\n\nIf this new time conflicts with your availability, let me know.\n\nBest regards,\nJane",
                 "is_phishing": False,
                 "difficulty_level": 1,
-                "is_external": True
+                "is_external": True,
+                "error_hint": "This is a routine scheduling email with no suspicious requests, links, or urgency."
             },
             {
                 "from": "Admin <admin@cybercorp-secure.com>",
@@ -117,7 +127,8 @@ init python:
                 "body": "Dear User,\n\nA critical security vulnerability has been identified in our system. To protect your data, it's imperative that you install the latest security patch immediately:\n\n[cybercorp-secure.com/update]\n\nFailure to apply this patch could result in compromised account security. Contact the IT Help Desk if you need assistance.\n\nRegards,\nIT Admin",
                 "is_phishing": True,
                 "difficulty_level": 3,
-                "is_external": False
+                "is_external": False,
+                "error_hint": "The domain (cybercorp-secure.com) isn't the company domain. IT departments don't ask you to download 'security patches' via email links."
             },
             {
                 "from": "Payroll Department <payroll@cybercorp.com>",
@@ -125,7 +136,8 @@ init python:
                 "body": "Dear [Employee Name],\n\nYour January payslip is now available on the employee portal. To view your payslip, please log in using the following secure link:\n\n[www.cybercorp.com/employee-portal]\n\nIf you encounter any issues accessing your payslip, contact the Payroll Department for support.\n\nBest regards,\nPayroll Team",
                 "is_phishing": False,
                 "difficulty_level": 2,
-                "is_external": False
+                "is_external": False,
+                "error_hint": "This is legitimate - the sender is from the company domain and the link points to the official company website."
             },
             {
                 "from": "Help Desk <support@cybercorp.com>",
@@ -133,7 +145,8 @@ init python:
                 "body": "Dear User,\n\nYour mailbox has reached 95% of its storage capacity. To avoid disruption in receiving future emails, please click the link below to manage your mailbox:\n\n[support-cybercorp.com/clean-mailbox]\n\nFailure to act may result in undelivered messages. Contact IT Support if you need assistance.\n\nBest,\nIT Help Desk",
                 "is_phishing": True,
                 "difficulty_level": 4,
-                "is_external": False
+                "is_external": False,
+                "error_hint": "While the email appears to be from the company domain, the link is suspicious (support-cybercorp.com, not cybercorp.com)."
             }
         ]
 
@@ -151,8 +164,12 @@ init python:
     def update_rank():
         """Updates the player's rank based on their score."""
         score = persistent.game_progress["score"]
-        
-        if score >= persistent.rank_data["rank_thresholds"]["Elite"]:
+
+        if score >= persistent.rank_data["rank_thresholds"]["Hacker"]:
+            persistent.rank_data["current_rank"] = "Hacker"
+        elif score >= persistent.rank_data["rank_thresholds"]["Master"]:
+            persistent.rank_data["current_rank"] = "Master"
+        elif score >= persistent.rank_data["rank_thresholds"]["Elite"]:
             persistent.rank_data["current_rank"] = "Elite"
         elif score >= persistent.rank_data["rank_thresholds"]["Expert"]:
             persistent.rank_data["current_rank"] = "Expert"
@@ -222,7 +239,8 @@ init python:
                 renpy.notify("Achievement Unlocked: Vigilant Observer!")
         else:
             penalty = max_difficulty - difficulty
-            renpy.notify("Incorrect. This email was " + ("safe." if not email["is_phishing"] else "a phishing attempt!") + " {} points lost".format(penalty))
+            error_hint = email.get("error_hint", "Always check the sender and content carefully.")
+            renpy.notify("Incorrect. This email was " + ("safe." if not email["is_phishing"] else "a phishing attempt!") + " {} points lost. \n{}. Try that one again!".format(penalty, error_hint))
             persistent.game_progress["score"] -= penalty  # score loss based on difficulty 
             email["answered_correctly"] = False
         

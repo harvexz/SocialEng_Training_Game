@@ -1272,9 +1272,9 @@ screen notify(message):
     style_prefix "notify"
 
     frame at notify_appear:
-        text "[message!tq]"
+        text "[message!tq]" size 24  # Increased text size
 
-    timer 3.25 action Hide('notify')
+    timer 6.25 action Hide('notify')  # Increased from 3.25 to 6.25 seconds
 
 
 transform notify_appear:
@@ -1296,6 +1296,7 @@ style notify_frame:
 
 style notify_text:
     properties gui.text_properties("notify")
+    size 24  # Explicitly set size here as well
 
 
 ## NVL screen ##################################################################
@@ -1625,8 +1626,8 @@ screen top_bar():
         xalign 0.01
         yalign 0.02
         background "#00000088"
-        padding (10, 5)
-        text "Score: [persistent.game_progress['score']]" color "#FFFFFF"
+        padding (15, 10)  # Increased padding for a bigger frame
+        text "Score: [persistent.game_progress['score']]" color "#FFFFFF" size 28  # Increased text size from default to 28
         #text "Level: [persistent.game_progress['current_level']] | Score: [persistent.game_progress['score']]" color "#FFFFFF"
 
 
@@ -1939,9 +1940,9 @@ screen email_inbox():
 
                                     # Indicator Dot
                                     if answered_correctly:
-                                        add Solid("#b5b5b5", xsize=10, ysize=10)  # Green dot for correct
+                                        add Solid("#b5b5b5", xsize=15, ysize=15)  # Gray dot for correct (also increased)
                                     else:
-                                        add Solid("#0000FF", xsize=10, ysize=10)  # Blue dot otherwise
+                                        add Solid("#0000FF", xsize=15, ysize=15)  # Blue dot increased to 15x15
 
                                     vbox:
                                         spacing 5
@@ -2335,16 +2336,20 @@ screen stats_screen():
                             $ current_rank = persistent.rank_data['current_rank']
                             $ score = persistent.game_progress['score']
                             
-                            if current_rank == "Elite":
+                            if current_rank == "Master" or current_rank == "Hacker":
                                 $ progress_value = 1.0
-                                $ next_rank = "Max Rank"
+                                $ next_rank = "Max rank"
                                 $ points_needed = 0
+                            elif current_rank == "Elite":
+                                $ progress_value = float(score) / 350.0
+                                $ next_rank = "Master"
+                                $ points_needed = 350 - score
                             elif current_rank == "Expert":
-                                $ progress_value = float(score - 100) / 100.0
+                                $ progress_value = float(score) / 275
                                 $ next_rank = "Elite"
-                                $ points_needed = 200 - score
+                                $ points_needed = 275 - score
                             elif current_rank == "Intermediate":
-                                $ progress_value = float(score - 50) / 50.0
+                                $ progress_value = float(score) / 100
                                 $ next_rank = "Expert"
                                 $ points_needed = 100 - score
                             else:
@@ -2452,7 +2457,11 @@ screen countdown_timer(duration):
             SetScreenVariable("timer_bar_value", timer_value / duration),
             If(
                 timer_value <= 0,
-                [SetVariable("timer_active", False), Return("timeout")]
+                [
+                    SetVariable("timer_active", False),
+                    Hide("countdown_timer"),
+                    Jump("timeout_handler")
+                ]
             )
         ],
         NullAction()
@@ -2462,18 +2471,18 @@ screen countdown_timer(duration):
         xalign 0.5
         yalign 0.05
         background "#00000088"
-        padding (15, 10)
+        padding (20, 15)  # Increased padding
         
         vbox:
-            spacing 5
+            spacing 8  # Increased spacing
             xalign 0.5
             
-            text "Time Remaining: {:.1f}".format(timer_value) color "#FFFFFF" size 18 xalign 0.5
+            text "Time Remaining: {:.1f}".format(timer_value) color "#FFFFFF" size 24 xalign 0.5  # Increased text size
             
-            bar value timer_bar_value range 1.0 xsize 200 ysize 15
+            bar value timer_bar_value range 1.0 xsize 250 ysize 20  # Larger bar
             
             if timer_value <= 5.0:
-                text "Hurry!" color "#FF0000" size 16 xalign 0.5
+                text "Hurry!" color "#FF0000" size 22 xalign 0.5  # Increased warning text size
 
 ## Legal Document Interface Screen ############################################################
 ##
