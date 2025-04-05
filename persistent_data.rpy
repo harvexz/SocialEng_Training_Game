@@ -1,6 +1,64 @@
 init python:
     import csv
     import os
+    import platform
+    import sys
+
+    def get_user_data_directory():
+        """
+        Returns a platform-specific directory where the game can save data files.
+        
+        Returns:
+            str: Path to an appropriate directory for saving game data
+        """
+        try:
+            system = platform.system()
+            
+            # Print debug info to the Ren'Py log
+            print(f"System detected: {system}")
+            
+            if system == "Windows":
+                # On Windows, use AppData/Roaming
+                path = os.path.join(os.environ.get("APPDATA", ""), "CyberCorpGame")
+                print(f"Windows path: {path}")
+                return path
+            elif system == "Darwin":  # macOS
+                # On macOS, use ~/Library/Application Support or ~/Documents
+                home = os.path.expanduser("~")
+                app_support = os.path.join(home, "Library", "Application Support", "CyberCorpGame")
+                documents = os.path.join(home, "Documents", "CyberCorpGame")
+                
+                print(f"macOS paths: App Support={app_support}, Documents={documents}")
+                
+                # Try to create app_support first, fall back to documents if needed
+                try:
+                    if not os.path.exists(app_support):
+                        print(f"Creating directory: {app_support}")
+                        os.makedirs(app_support)
+                    return app_support
+                except OSError as e:
+                    print(f"Error creating App Support directory: {e}")
+                    if not os.path.exists(documents):
+                        print(f"Creating directory: {documents}")
+                        os.makedirs(documents)
+                    return documents
+            else:  # Linux and others
+                # On Linux, use ~/.local/share
+                home = os.path.expanduser("~")
+                data_dir = os.path.join(home, ".local", "share", "CyberCorpGame")
+                
+                print(f"Linux/other path: {data_dir}")
+                
+                if not os.path.exists(data_dir):
+                    print(f"Creating directory: {data_dir}")
+                    os.makedirs(data_dir)
+                return data_dir
+        except Exception as e:
+            # If anything unexpected happens, fall back to a directory we know exists
+            print(f"Unexpected error in get_user_data_directory: {e}")
+            fallback_dir = os.path.dirname(config.savedir)
+            print(f"Using fallback directory: {fallback_dir}")
+            return fallback_dir
 
     if not hasattr(persistent, "game_progress") or persistent.game_progress is None:
         persistent.game_progress = {
@@ -158,7 +216,16 @@ init python:
         # Check for achievements
         check_achievements()
         renpy.save_persistent()  # Save changes
-        log_data() # Exports to csv
+        try:
+            log_data() # Exports to csv
+        except Exception as e:
+            # Log the error but don't crash the game if writing fails
+            error_msg = str(e)
+            if "Read-only file system" in error_msg or "Permission denied" in error_msg:
+                renpy.notify("Note: Could not save analytics data due to file permissions. Your game progress is still saved.")
+            else:
+                renpy.notify("Note: Analytics data could not be saved. Your game progress is still saved.")
+            print(f"Error logging data: {e}")
     
 
     def update_rank():
@@ -196,18 +263,58 @@ init python:
 
     def log_data():
         """Logs player data to CSV."""
-
-        filepath = os.path.join(config.basedir, "player_data.csv")
-        
-        with open(filepath, "a", newline="") as file:
-            writer = csv.writer(file)
-            writer.writerow([
-                persistent.game_progress["current_level"],
-                persistent.game_progress["score"],
-                persistent.game_progress["level_status"],
-                persistent.game_progress["replay_status"],
-                persistent.rank_data["current_rank"]  # Added rank to the logged data
-            ])
+        try:
+            # Get the user-specific data directory
+            data_dir = get_user_data_directory()
+            
+            # Create the directory if it doesn't exist
+            if not os.path.exists(data_dir):
+                try:
+                    os.makedirs(data_dir)
+                    print(f"Created data directory: {data_dir}")
+                except Exception as e:
+                    print(f"Error creating data directory: {e}")
+                    raise
+            
+            # Create the filepath in the user's data directory
+            filepath = os.path.join(data_dir, "player_data.csv")
+            print(f"Attempting to write to: {filepath}")
+            
+            # Check if the file exists and create header if it doesn't
+            file_exists = os.path.isfile(filepath)
+            
+            # Try to open and write to the file
+            try:
+                with open(filepath, "a", newline="") as file:
+                    writer = csv.writer(file)
+                    
+                    # Write header if this is a new file
+                    if not file_exists:
+                        writer.writerow([
+                            "Level", 
+                            "Score", 
+                            "Status",
+                            "Replay Status",
+                            "Rank"
+                        ])
+                    
+                    # Write the player data
+                    writer.writerow([
+                        persistent.game_progress["current_level"],
+                        persistent.game_progress["score"],
+                        persistent.game_progress["level_status"],
+                        persistent.game_progress["replay_status"],
+                        persistent.rank_data["current_rank"]
+                    ])
+                print(f"Successfully wrote data to {filepath}")
+            except Exception as e:
+                print(f"Error writing to CSV file {filepath}: {e}")
+                raise
+                
+        except Exception as e:
+            # Print the error for debugging but allow the game to continue
+            print(f"Error in log_data: {e}")
+            raise  # Re-raise to be caught by save_progress
     
 
     def check_email(reported_as_phishing):
@@ -288,3 +395,29 @@ init python:
             # Reset the all_emails_correct flag
             persistent.all_emails_correct = False
             renpy.notify("Email status has been reset for replay")
+
+    def delete_analytics_data():
+        """
+        Utility function to delete the analytics data file.
+        This can be exposed through a settings menu if needed.
+        
+        Returns:
+            bool: True if the file was deleted successfully, False otherwise
+        """
+        try:
+            data_dir = get_user_data_directory()
+            filepath = os.path.join(data_dir, "player_data.csv")
+            
+            if os.path.exists(filepath):
+                os.remove(filepath)
+                print(f"Deleted analytics data file: {filepath}")
+                renpy.notify("Analytics data has been deleted.")
+                return True
+            else:
+                print(f"No analytics data file found at: {filepath}")
+                renpy.notify("No analytics data found to delete.")
+                return False
+        except Exception as e:
+            print(f"Error deleting analytics data: {e}")
+            renpy.notify("Error deleting analytics data. See log for details.")
+            return False

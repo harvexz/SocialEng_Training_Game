@@ -211,7 +211,7 @@ label access_granted:
     "You allowed an unauthorized person into the server room. If this were real, sensitive company data could now be compromised."
     "LEVEL FAILED!"
 
-    $ persistent.game_progress["score"] += 100
+    $ persistent.game_progress["score"] -= 5
     $ save_progress()
     
     jump level_failed

@@ -86,7 +86,14 @@ The game collects anonymous gameplay data for research purposes, including:
 - Replay status
 - Current rank
 
-This data is stored in a CSV file (`player_data.csv`) and is used to analyze player performance and improve the game's educational effectiveness.
+This data is stored in a CSV file (`player_data.csv`) in a platform-specific location:
+- **Windows**: `%AppData%\CyberCorpGame\player_data.csv`
+- **macOS**: `~/Library/Application Support/CyberCorpGame/player_data.csv` or `~/Documents/CyberCorpGame/player_data.csv`
+- **Linux**: `~/.local/share/CyberCorpGame/player_data.csv`
+
+If the game cannot write to these locations (e.g., due to permission issues), it will display a notification but continue to function normally. Your progress will still be saved through Ren'Py's built-in persistent data system.
+
+The collected data is used to analyze player performance and improve the game's educational effectiveness. No personally identifiable information is collected.
 
 ## Project Aim
 
