@@ -62,7 +62,7 @@ label tutorial:
 
     "Welcome to the game, Let's show you how to play! (click to continue)"
     "Firstly, you can click anyware on the screen to continue through each dialog."
-    "Or press any button on your keyboad!"
+    "Or press the space button on your keyboard!"
 
     "Secondly, if you ever miss something, you can click the small back button just below this text!"
 
@@ -80,7 +80,7 @@ label tutorial:
 
     menu:
         "I'm ready":
-            "Do you concent for your data to be anonymously used?"
+            "Do you consent for your data to be anonymously used?"
 
             menu:
                 "Yes, my data can be used anonymously":
@@ -905,7 +905,7 @@ label chat_suspicious:
         "Go ahead and report it. I'm following security protocols.":
             $ _chat_history.append({"sender": "you", "text": "Go ahead and report it. I'm following security protocols."})
             $ chat_score += 2
-            $ renpy.notify("+2 point for standing firm on security")
+            $ renpy.notify("+2 points for being firm on security and sticking to policy")
             hide screen chat_interface
             show screen chat_interface
             jump chat_success
@@ -913,7 +913,7 @@ label chat_suspicious:
         "I'll need to escalate this conversation to the security team.":
             $ _chat_history.append({"sender": "you", "text": "I'll need to escalate this conversation to the security team."})
             $ chat_score += 2
-            $ renpy.notify("+2 point for involving security")
+            $ renpy.notify("+2 points for involving security")
             hide screen chat_interface
             show screen chat_interface
             jump chat_success
@@ -945,7 +945,7 @@ label chat_continue:
         "Let me check with IT about your email issues first.":
             $ _chat_history.append({"sender": "you", "text": "Let me check with IT about your email issues first."})
             $ chat_score += 2
-            $ renpy.notify("+2 point for verifying with IT")
+            $ renpy.notify("+2 points for verifying with IT")
             hide screen chat_interface
             show screen chat_interface
             jump chat_success
@@ -1360,7 +1360,7 @@ label fourth_level:
             
             jump inside_building
             
-        "Politely remind him about badge scanning":
+        "Politely remind her about badge scanning":
             player "Oh, don't forget to scan your badge. They're really strict about that here."
             
             # Add +1 point for confronting nicely

@@ -1658,14 +1658,14 @@ screen level_select():
             else:
                 return level_id
     
-    add gui.game_menu_background
+    add "images/bg personal_office.png"
     
     frame:
         xalign 0.5
         yalign 0.5
         xsize 900
         ysize 630
-        background "#00000088"
+        background "#000000ff"
         padding (30, 30)
         
         vbox:
@@ -1789,7 +1789,7 @@ screen level_select():
                                         xsize 600
                                         spacing 5
                                         
-                                        text "Level 2: Check your mail!" size 22 color "#FFFFFF" bold True
+                                        text "Level 2: Check Your Mail!" size 22 color "#FFFFFF" bold True
                                         text "Identify and report phishing emails" size 16 color "#CCCCCC"
                                     
                                     button:
@@ -1941,8 +1941,32 @@ screen email_inbox():
                                     # Indicator Dot
                                     if answered_correctly:
                                         add Solid("#b5b5b5", xsize=15, ysize=15)  # Gray dot for correct (also increased)
+                                        
+                                        # Add a stamp-like indicator for what user selected (Safe or Phishing)
+                                        frame:
+                                            xsize 100
+                                            ysize 45
+                                            xalign 0.0
+                                            xoffset 0
+                                            padding (3, 3)
+                                            margin (0, 0, 0, 0)
+                                            
+                                            # Red "PHISHING" or green "SAFE" indicator based on email type
+                                            if email.get("is_phishing", False) == True:
+                                                background Frame("#FFFFFF", Borders(2, 2, 2, 2))
+                                                foreground Frame("#FF000055", Borders(2, 2, 2, 2))
+                                                transform:
+                                                    rotate 12  
+                                                    text "PHISHING" size 18 color "#CC0000" bold True xalign 0.5 yalign 0.5 font "gui/fonts/LEMONMILK-Medium.otf" text_align 0.5 line_leading 0
+                                            else:
+
+                                                background Frame("#FFFFFF", Borders(2, 2, 2, 2))
+                                                foreground Frame("#00AA0055", Borders(3, 3, 3, 3))
+                                                transform:
+                                                    rotate 12
+                                                    text "SAFE" size 18 color "#008800" bold True xalign 0.5 yalign 0.5 font "gui/fonts/LEMONMILK-Medium.otf" text_align 0.5 line_leading 0
                                     else:
-                                        add Solid("#0000FF", xsize=15, ysize=15)  # Blue dot increased to 15x15
+                                        add Solid("#0000FF", xsize=15, ysize=15)  # Blue dot
 
                                     vbox:
                                         spacing 5
@@ -2292,14 +2316,14 @@ screen score_panel():
 screen stats_screen():
     tag menu
     
-    add gui.game_menu_background
+    add "images/bg personal_office.png"
     
     frame:
         xalign 0.5
         yalign 0.5
         xsize 900
         ysize 600
-        background "#00000088"
+        background "#000000ff"
         padding (30, 30)
         
         vbox:
